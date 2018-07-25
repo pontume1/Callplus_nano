@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/textColorPrimary"
+    android:orientation="horizontal"
+    android:padding="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginBottom="4dp"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
+                android:contentDescription="TODO"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/secondLine"
+                android:layout_width="187dp"
+                android:layout_height="26dip"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="false"
+                android:layout_toRightOf="@id/icon"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Description"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/firstLine"
+                android:layout_width="187dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/secondLine"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@id/icon"
+                android:gravity="center_vertical"
+                android:text="Phone no"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

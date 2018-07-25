@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/keyboardLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:paddingBottom="38dp">
+
+    <EditText
+        android:id="@+id/EditTextPhoneNumber"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/edittext_bg"
+        android:cursorVisible="false"
+        android:editable="true"
+        android:gravity="fill_vertical|center"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textColor="@color/colorAccent"
+        android:textSize="24.0sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/Row1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/EditTextPhoneNumber"
+        android:background="@color/cardview_light_background">
+        <!--  Buttons 1 2 3 -->
+        <ImageButton
+            android:id="@+id/Button1"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_1_no_vm" />
+
+        <ImageButton
+            android:id="@+id/Button2"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_2" />
+
+        <ImageButton
+            android:id="@+id/Button3"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_3" />
+
+    </LinearLayout>
+
+    <!-- Buttons 4 5 6 -->
+    <LinearLayout
+        android:id="@+id/Row2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/Row1"
+        android:background="@color/cardview_light_background">
+
+        <ImageButton
+            android:id="@+id/Button4"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_4" />
+
+        <ImageButton
+            android:id="@+id/Button5"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_5" />
+
+        <ImageButton
+            android:id="@+id/Button6"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_6" />
+
+    </LinearLayout>
+    <!-- Buttons 7 8 9 -->
+    <LinearLayout
+        android:id="@+id/Row3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/Row2"
+        android:background="@color/cardview_light_background">
+
+        <ImageButton
+            android:id="@+id/Button7"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_7" />
+
+        <ImageButton
+            android:id="@+id/Button8"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_8" />
+
+        <ImageButton
+            android:id="@+id/Button9"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_9" />
+    </LinearLayout>
+    <!-- Buttons * 0 # -->
+    <LinearLayout
+        android:id="@+id/Row4"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/Row3"
+        android:background="@color/cardview_light_background">
+
+        <ImageButton
+            android:id="@+id/ButtonStar"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_star" />
+
+        <ImageButton
+            android:id="@+id/Button0"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_0" />
+
+        <ImageButton
+            android:id="@+id/ButtonHash"
+            style="@style/DialerButton"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:src="@drawable/dial_num_pound" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Row5"
+        android:layout_width="fill_parent"
+        android:layout_height="48.0dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/Row4"
+        android:background="@color/cardview_light_background">
+
+        <ImageButton
+            android:id="@+id/ButtonContract"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button"
+            android:onClick="onClick"
+            android:src="@drawable/button_contract" />
+
+        <ImageButton
+            android:id="@+id/ButtonCallRinglerr"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="2"
+            android:background="@drawable/bg_button"
+            android:onClick="onClick"
+            android:scaleType="fitCenter"
+            android:src="@drawable/r_call" />
+
+        <ImageButton
+            android:id="@+id/ButtonCall"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="2"
+            android:background="@drawable/bg_button"
+            android:onClick="onClick"
+            android:src="@drawable/button_call" />
+
+        <ImageButton
+            android:id="@+id/ButtonDelete"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button"
+            android:onClick="onClick"
+            android:src="@drawable/button_backspace" />
+    </LinearLayout>
+</RelativeLayout>

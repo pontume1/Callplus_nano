@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="8dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:height="100dp"
+        android:background="@drawable/side_nav_bar"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center_horizontal"
+            android:text="Repeat"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center_horizontal"
+        android:text="Every"
+        android:maxLines="1"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:width="100dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="5dp"
+        android:maxLines="1"
+        android:gravity="center_horizontal"
+        android:text="hour"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+    </LinearLayout>
+
+    <co.ceryle.radiorealbutton.RadioRealButtonGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        app:rrbg_animateDrawables_enter="overshoot"
+        app:rrbg_animateTexts_enter="overshoot"
+        app:rrbg_dividerColor="@color/black"
+        app:rrbg_dividerSize="1dp"
+        app:rrbg_radius="5dp"
+        app:rrbg_selectorColor="@color/red_color_picker"
+        app:rrbg_selectorSize="6dp">
+
+    <co.ceryle.radiorealbutton.RadioRealButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        app:rrb_drawableHeight="36dp"
+        app:rrb_drawablePadding="8dp"
+        app:rrb_drawableWidth="36dp"
+        app:rrb_ripple="true"
+        app:rrb_rippleColor="@color/black"
+        app:rrb_text="Once"
+        app:rrb_textColor="@color/black" />
+
+    <co.ceryle.radiorealbutton.RadioRealButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:rrb_drawableGravity="right"
+        app:rrb_drawableHeight="36dp"
+        app:rrb_drawablePadding="8dp"
+        app:rrb_drawableWidth="36dp"
+        app:rrb_ripple="true"
+        app:rrb_rippleColor="@color/black"
+        app:rrb_text="Forever"
+        app:rrb_textColor="@color/black" />
+
+    </co.ceryle.radiorealbutton.RadioRealButtonGroup>
+
+    <Button
+        android:id="@+id/repeat_set"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:text="Set"
+        android:layout_height="0dp" />
+
+</LinearLayout>

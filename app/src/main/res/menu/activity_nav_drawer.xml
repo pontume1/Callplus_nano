@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_camera"
+            android:icon="@drawable/about"
+            android:title="About"
+            app:itemTextColor="@color/colorPrimary"
+            app:itemIconTint="@color/colorPrimary"/>
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/settings"
+            android:title="Settings" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/invite"
+            android:title="Invite Friends" />
+        <item
+            android:id="@+id/nav_notification"
+            android:icon="@drawable/bell"
+            android:title="Notifications" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/star"
+            android:title="Favorite" />
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/share_nav"
+            android:title="Share This App" />
+        <item
+            android:id="@+id/nav_send"
+            android:icon="@drawable/rate"
+            android:title="Rate This App" />
+    </group>
+</menu>

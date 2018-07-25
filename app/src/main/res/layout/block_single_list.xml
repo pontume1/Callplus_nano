@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:padding="2dp">
+
+        <ImageView
+            android:id="@+id/profile_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="TODO"
+            android:src="@mipmap/ic_launcher" />
+
+
+        <TextView
+            android:id="@+id/firstLine"
+            android:layout_width="156dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="7dp"
+            android:layout_toEndOf="@+id/profile_icon"
+            android:gravity="center_vertical"
+            android:text="Phone no"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/secondLine"
+            android:layout_width="122dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/firstLine"
+            android:layout_below="@+id/firstLine"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Description"
+            android:textSize="10sp" />
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="36dp"
+            android:adjustViewBounds="false"
+            android:background="@drawable/flag_transparent"
+            android:contentDescription="call"
+            android:cropToPadding="false"
+            android:scaleType="fitCenter"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/textColorPrimary"
+    android:orientation="horizontal"
+    android:padding="4dp">
+
+    <LinearLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginBottom="4dp"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/profile_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
+                android:contentDescription="TODO"
+                android:src="@mipmap/ic_launcher" />
+
+            <ImageView
+                android:id="@+id/call_type_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/firstLine"
+                android:layout_marginStart="62dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="call_type" />
+
+            <TextView
+                android:id="@+id/secondLine"
+                android:layout_width="122dp"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/firstLine"
+                android:layout_alignTop="@+id/call_type_icon"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Description"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/firstLine"
+                android:layout_width="156dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="7dp"
+                android:layout_toEndOf="@+id/profile_icon"
+                android:gravity="center_vertical"
+                android:text="Phone no"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/rCallButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="102dp"
+                android:adjustViewBounds="false"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/r_call" />
+
+            <ImageButton
+                android:id="@+id/callButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="56dp"
+                android:adjustViewBounds="false"
+                android:background="@drawable/flag_transparent"
+                android:contentDescription="call"
+                android:cropToPadding="false"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/call" />
+
+            <TextView
+                android:id="@+id/dnButton"
+                android:layout_width="18dp"
+                android:layout_height="15dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="call"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:saveEnabled="false"
+                android:scaleType="centerCrop"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#BBBBBB" />
+
+        <LinearLayout
+            android:id="@+id/slideView"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/listPreferredItemHeight"
+            android:background="@drawable/contact_list_bg"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/msgButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/icon_1" />
+
+            <ImageButton
+                android:id="@+id/addButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_person_add_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/reminderButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@android:drawable/ic_lock_idle_alarm" />
+
+            <ImageButton
+                android:id="@+id/blockButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_block_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/whatsapp_btn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/whats_app" />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@android:drawable/ic_menu_delete" />
+
+            <!--<ImageButton-->
+            <!--android:id="@+id/shareButton"-->
+            <!--android:layout_width="25dp"-->
+            <!--android:layout_height="25dp"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@color/fui_transparent"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--app:srcCompat="@drawable/share_pink" />-->
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#BBBBBB" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

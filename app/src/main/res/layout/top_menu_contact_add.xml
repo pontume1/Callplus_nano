@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/contactCancelButton"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="130dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="TODO"
+        android:scaleType="centerCrop"
+        android:src="@drawable/contact_cancel" />
+
+    <ImageButton
+        android:id="@+id/contactSaveButton"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="17dp"
+        android:contentDescription="save contact"
+        android:scaleType="centerCrop"
+        android:background="@android:color/transparent"
+        android:src="@drawable/contact_save" />
+</RelativeLayout>
