@@ -403,7 +403,7 @@ public class MyOutgoingCustomDialog extends Activity {
 
                     //this.setFinishOnTouchOutside(false);
 
-                    if(is_ringlerr == true) {
+                    if(is_ringlerr) {
                         if (type.equals("gif")) {
                             final ProgressDialog progress = new ProgressDialog(MyOutgoingCustomDialog.this);
                             progress.setTitle("Connecting");
@@ -494,7 +494,7 @@ public class MyOutgoingCustomDialog extends Activity {
                         };
 
                         Handler pdCanceller = new Handler();
-                        pdCanceller.postDelayed(progressRunnable, 5000);
+                        pdCanceller.postDelayed(progressRunnable, 1500);
 
                     }
 
