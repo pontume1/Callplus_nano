@@ -8,5 +8,8 @@
 /captures
 /junk
 /app/build
+/app/release
+/app/src.tar.gz
+/app/src.zip
 /app/google-services.json
 .externalNativeBuild
