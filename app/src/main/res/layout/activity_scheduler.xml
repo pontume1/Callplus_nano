@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <RelativeLayout
+            android:id="@+id/scheduler_person_relative"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/cardbackground">
+
+            <ImageView
+                android:id="@+id/scheduler_person_image"
+                android:layout_alignParentTop="true"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/my_profile"/>
+            <TextView
+                android:id="@+id/scheduler_person_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/scheduler_person_image"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:text="CHOOSE CONTACT"
+                android:textSize="15dp"/>
+            <ImageView
+                android:id="@+id/scheduler_date_image"
+                android:layout_below="@+id/scheduler_person_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/calendar"/>
+            <TextView
+                android:id="@+id/scheduler_date_text"
+                android:layout_toRightOf="@+id/scheduler_date_image"
+                android:layout_below="@+id/scheduler_person_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:text="SELECT DATE"
+                android:textSize="15dp"/>
+            <ImageView
+                android:id="@+id/shceduler_time_image"
+                android:layout_below="@+id/scheduler_date_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/time2"/>
+            <TextView
+                android:id="@+id/scheduler_time_text"
+                android:layout_toRightOf="@+id/shceduler_time_image"
+                android:layout_below="@id/scheduler_date_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:text="SELECT TIME"
+                android:textSize="15dp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/scheduler_date_relative"
+            android:layout_below="@+id/scheduler_person_relative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:background="@drawable/cardbackground">
+
+            <EditText
+                android:id="@+id/scheduler_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:background="@drawable/bordernone"
+                android:minLines="3"
+                android:gravity="top|left"
+                android:scrollbars="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:maxLines="3"
+                android:lines="3"
+
+                android:hint="Enter Your Message"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/scheduler_time_relative"
+            android:layout_below="@+id/scheduler_date_relative"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/cardbackground">
+
+
+            <TextView
+                android:id="@+id/scheduler_prompt_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Prompt me"/>
+            <TextView
+                android:id="@+id/scheduler_prompt_text_duration"
+                android:layout_below="@+id/scheduler_prompt_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:visibility="visible"
+                android:text="( 5 min )"/>
+            <Switch
+                android:id="@+id/scheduler_prompt_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentRight="true"/>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/shceduler_send_via_relative"
+            android:layout_below="@+id/scheduler_time_relative"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/cardbackground">
+            <Button
+                android:id="@+id/shceduler_send_button"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:background="#FFFFFF"
+                android:text="SEND VIA"
+                android:textColor="#fa6377"
+                android:textSize="16dp"
+                android:padding="20dp"/>
+
+            <ImageView
+                android:id="@+id/scheduler_message_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/shceduler_send_button"
+                android:background="#eee"
+                android:src="@drawable/msg" />
+
+            <ImageView
+                android:id="@+id/scheduler_whatsapp_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/scheduler_message_icon"
+                android:src="@drawable/whats" />
+
+            <ImageView
+                android:id="@+id/scheduler_facebook_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/scheduler_whatsapp_icon"
+                android:src="@drawable/face" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/scheduler_save"
+            android:layout_below="@id/shceduler_send_via_relative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+            <Button
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/border_radius"
+                android:text="SAVE"
+                android:textSize="18dp"
+                android:padding="7dp"
+                android:textColor="#FFFFFF"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+</ScrollView>
