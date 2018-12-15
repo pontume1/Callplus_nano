@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.luncher.santanu.dailer.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.luncher.bounjour.ringlerr.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,4 +10,4 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:padding="5dp" />
-</com.luncher.santanu.dailer.SquareLayout>
+</com.luncher.bounjour.ringlerr.SquareLayout>

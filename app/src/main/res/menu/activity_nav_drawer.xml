@@ -6,34 +6,39 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_about"
             android:icon="@drawable/about"
             android:title="About"
             app:itemTextColor="@color/colorPrimary"
             app:itemIconTint="@color/colorPrimary"/>
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_settings"
             android:icon="@drawable/settings"
-            android:title="Settings" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/invite"
-            android:title="Invite Friends" />
+            android:title="Profile" />
+        <!--<item-->
+            <!--android:id="@+id/nav_slideshow"-->
+            <!--android:icon="@drawable/invite"-->
+            <!--android:title="Invite Friends" />-->
         <item
             android:id="@+id/nav_notification"
             android:icon="@drawable/bell"
             android:title="Notifications" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/star"
-            android:title="Favorite" />
+        <!--<item-->
+            <!--android:id="@+id/nav_manage"-->
+            <!--android:icon="@drawable/star"-->
+            <!--android:title="Favorite" />-->
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/share_nav"
             android:title="Share This App" />
         <item
-            android:id="@+id/nav_send"
-            android:icon="@drawable/rate"
+            android:id="@+id/nav_rate"
+            android:icon="@drawable/star"
             android:title="Rate This App" />
+
+        <item
+            android:id="@+id/action_follow_us"
+            android:icon="@drawable/rate"
+            android:title="@string/action_follow_us" />
     </group>
 </menu>

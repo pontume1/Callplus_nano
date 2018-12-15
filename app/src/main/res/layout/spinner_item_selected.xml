@@ -1,0 +1,8 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    style="@style/Base.TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
+    android:singleLine="true"
+    android:layout_width="match_parent"
+    android:layout_height="25dp"
+    android:background="@drawable/abc_spinner_mtrl_am_alpha"
+    android:ellipsize="marquee" />

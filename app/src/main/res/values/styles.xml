@@ -81,4 +81,11 @@
         <item name="android:layout_marginLeft">4.0dip</item>
         <item name="android:layout_marginRight">4.0dip</item>
     </style>
+
+    <style name="InputLabel" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:paddingTop">@dimen/input_label_vertical_spacing</item>
+        <item name="android:paddingLeft">@dimen/input_label_horizontal_spacing</item>
+        <item name="android:paddingRight">@dimen/input_label_horizontal_spacing</item>
+    </style>
+
 </resources>

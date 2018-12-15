@@ -5,85 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        android:background="@drawable/side_nav_bar"
-        android:orientation="horizontal">
-
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
-            app:srcCompat="@drawable/create_contact" />
-
-        <RelativeLayout
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent">
-
-            <ImageButton
-                android:id="@+id/cancle_button"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="32dp"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/contact_cancel" />
-
-            <ImageButton
-                android:id="@+id/add_phone_contact_save_button"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="15dp"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/contact_save" />
-        </RelativeLayout>
-    </LinearLayout>
-
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="50dp"
             android:orientation="vertical"
             android:padding="1dp"
             android:paddingBottom="50dp">
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:orientation="horizontal">
-
-
-                <ImageButton
-                    android:id="@+id/imageButton8"
-                    android:layout_width="20dp"
-                    android:layout_height="100dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/profile_picture_upload" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -122,8 +57,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:paddingTop="10dp">
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -255,6 +190,62 @@
                     android:drawableLeft="@drawable/website"
                     android:hint="Website"
                     android:inputType="textPersonName" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/cancle_button"
+                    android:layout_width="140dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/button_radius"
+                    android:text="Cancel"
+                    android:textColor="@color/textColorPrimary" />
+
+                <Button
+                    android:id="@+id/add_phone_contact_save_button"
+                    android:layout_width="140dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/button_radius"
+                    android:text="Save"
+                    android:textColor="@color/textColorPrimary" />
+                <!--<ImageButton-->
+                <!--android:id="@+id/cancle_button"-->
+                <!--android:layout_width="75dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentStart="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_marginStart="32dp"-->
+                <!--android:layout_marginEnd="5dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@android:color/transparent"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--app:srcCompat="@drawable/contact_cancel" />-->
+
+                <!--<ImageButton-->
+                <!--android:id="@+id/add_phone_contact_save_button"-->
+                <!--android:layout_width="75dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_alignParentEnd="true"-->
+                <!--android:layout_marginStart="5dp"-->
+                <!--android:layout_marginEnd="15dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@android:color/transparent"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--app:srcCompat="@drawable/contact_save" />-->
 
             </LinearLayout>
 

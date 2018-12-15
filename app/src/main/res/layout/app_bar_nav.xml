@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.luncher.santanu.dailer.MainActivity">
+    tools:context="com.luncher.bounjour.ringlerr.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/side_nav_bar"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:logo="@drawable/logo_main"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            android:layout_height="45dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <ImageView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="25dp"
+                android:src="@drawable/logo_main" />
+
+        </androidx.appcompat.widget.Toolbar>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -53,41 +62,47 @@
 
         </RelativeLayout>
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/textColorPrimary"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabTextColor="@color/black_overlay">
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Frequent" />
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Recent" />
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Contacts" />
-        </android.support.design.widget.TabLayout>
+        </com.google.android.material.tabs.TabLayout>
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_nav" />
+    <include
+        layout="@layout/content_nav"
+        android:layout_height="379dp"
+        tools:ignore="IncludeLayoutParam" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@drawable/side_nav_bar"
+        android:background="@drawable/top_shadow"
         android:gravity="end"
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <ImageButton
+        <!--ImageButton
             android:id="@+id/stickerButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -95,7 +110,17 @@
             android:layout_weight="1"
             android:background="@color/fui_transparent"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/you" />
+            app:srcCompat="@drawable/you" /-->
+
+        <ImageButton
+            android:id="@+id/schedularButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/fui_transparent"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_add_alert_white_24dp" />
 
         <ImageButton
             android:id="@+id/keyboard"
@@ -107,7 +132,7 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/combined_shape" />
 
-        <ImageButton
+        <!--ImageButton
             android:id="@+id/gifButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -115,7 +140,7 @@
             android:layout_weight="1"
             android:background="@color/fui_transparent"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/layer_4" />
+            app:srcCompat="@drawable/layer_4" /-->
 
         <ImageButton
             android:id="@+id/reminderButton"
@@ -128,5 +153,4 @@
             app:srcCompat="@drawable/reminder_white_24dp" />
     </LinearLayout>
 
-
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -25,12 +25,12 @@
 
             <ImageView
                 android:id="@+id/profile_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_alignParentBottom="true"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:contentDescription="TODO"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_marginTop="8dp"
+                android:contentDescription="TODO" />
 
             <ImageView
                 android:id="@+id/call_type_icon"
@@ -103,21 +103,30 @@
                 android:scaleType="centerCrop"
                 android:textSize="12sp" />
 
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="18dp"
+                android:layout_height="30dp"
+                android:layout_alignBottom="@+id/call_type_icon"
+                android:layout_marginEnd="-7dp"
+                android:layout_toStartOf="@+id/firstLine"
+                android:visibility="gone" />
+
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:background="#BBBBBB" />
+            android:background="#EEEEEE" />
 
         <LinearLayout
             android:id="@+id/slideView"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/listPreferredItemHeight"
-            android:background="@drawable/contact_list_bg"
+            android:layout_height="40dp"
+            android:background="#f5f5f5"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <ImageButton
                 android:id="@+id/msgButton"
@@ -138,6 +147,17 @@
                 android:background="@color/fui_transparent"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/ic_person_add_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/editButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                app:srcCompat="@android:drawable/ic_menu_edit" />
 
             <ImageButton
                 android:id="@+id/reminderButton"
@@ -177,7 +197,7 @@
                 android:layout_weight="1"
                 android:background="@color/fui_transparent"
                 android:scaleType="fitCenter"
-                app:srcCompat="@android:drawable/ic_menu_delete" />
+                app:srcCompat="@drawable/ic_delete_red_24dp" />
 
             <!--<ImageButton-->
             <!--android:id="@+id/shareButton"-->
@@ -195,7 +215,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:background="#BBBBBB" />
+            android:background="#EEEEEE" />
 
     </LinearLayout>
 

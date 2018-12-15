@@ -11,6 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -21,12 +22,14 @@
 
             <ImageView
                 android:id="@+id/icon"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
-                android:contentDescription="TODO"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="10dp"
+                android:contentDescription="user"/>
 
             <TextView
                 android:id="@+id/secondLine"
@@ -51,6 +54,15 @@
                 android:gravity="center_vertical"
                 android:text="Phone no"
                 android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="18dp"
+                android:layout_height="30dp"
+                android:layout_alignEnd="@+id/icon"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone"
+                android:src="@drawable/disc_jockey" />
 
         </RelativeLayout>
 

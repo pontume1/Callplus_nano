@@ -128,7 +128,6 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginBottom="0dp"
                 android:layout_marginLeft="-5dp"
-                android:contentDescription="TODO"
                 android:scaleType="fitCenter"
                 android:src="@drawable/my_profile" />
 
@@ -153,7 +152,6 @@
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="Phone no"
-                android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -163,7 +161,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Last Week"
-                android:textColor="@color/colorPrimary"
                 android:textSize="12sp" />
 
             <TextView
@@ -174,7 +171,6 @@
                 android:layout_centerHorizontal="true"
                 android:paddingTop="2dp"
                 android:text="0 calls"
-                android:textColor="@color/colorPrimary"
                 android:textSize="11sp" />
 
             <TextView
@@ -183,9 +179,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/countText"
                 android:layout_centerHorizontal="true"
+                android:paddingLeft="20dp"
                 android:paddingTop="2dp"
                 android:text="0 hours"
-                android:textColor="@color/colorPrimary"
                 android:textSize="11sp" />
 
 

@@ -3,35 +3,37 @@
     android:id="@+id/keyboardLayout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:gravity="bottom"
-    android:paddingBottom="38dp">
+    android:layout_gravity="bottom"
+    android:foregroundGravity="bottom"
+    android:gravity="bottom">
 
     <EditText
         android:id="@+id/EditTextPhoneNumber"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
         android:layout_marginBottom="0dp"
-        android:background="@drawable/edittext_bg"
-        android:cursorVisible="false"
-        android:editable="true"
+        android:background="#FFF5F5F5"
         android:gravity="fill_vertical|center"
+        android:inputType="phone"
         android:maxLines="1"
+        android:padding="5dp"
         android:scrollHorizontally="true"
         android:textColor="@color/colorAccent"
-        android:textSize="24.0sp"
+        android:textIsSelectable="true"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/Row1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/EditTextPhoneNumber"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/EditTextPhoneNumber"
-        android:background="@color/cardview_light_background">
+        android:background="@color/blueGray50">
         <!--  Buttons 1 2 3 -->
         <ImageButton
             android:id="@+id/Button1"
@@ -61,10 +63,10 @@
         android:id="@+id/Row2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/Row1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/Row1"
-        android:background="@color/cardview_light_background">
+        android:background="@color/blueGray50">
 
         <ImageButton
             android:id="@+id/Button4"
@@ -93,10 +95,10 @@
         android:id="@+id/Row3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/Row2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/Row2"
-        android:background="@color/cardview_light_background">
+        android:background="@color/gray200">
 
         <ImageButton
             android:id="@+id/Button7"
@@ -124,10 +126,10 @@
         android:id="@+id/Row4"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/Row3"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/Row3"
-        android:background="@color/cardview_light_background">
+        android:background="@color/blueGray50">
 
         <ImageButton
             android:id="@+id/ButtonStar"
@@ -155,26 +157,17 @@
         android:id="@+id/Row5"
         android:layout_width="fill_parent"
         android:layout_height="48.0dip"
+        android:layout_below="@id/Row4"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/Row4"
-        android:background="@color/cardview_light_background">
-
-        <ImageButton
-            android:id="@+id/ButtonContract"
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_button"
-            android:onClick="onClick"
-            android:src="@drawable/button_contract" />
+        android:background="@color/blueGray50">
 
         <ImageButton
             android:id="@+id/ButtonCallRinglerr"
             android:layout_width="0dip"
             android:layout_height="match_parent"
-            android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_weight="2"
             android:background="@drawable/bg_button"
             android:onClick="onClick"
@@ -184,18 +177,21 @@
         <ImageButton
             android:id="@+id/ButtonCall"
             android:layout_width="0dip"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_weight="2"
             android:background="@drawable/bg_button"
             android:onClick="onClick"
-            android:src="@drawable/button_call" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/call" />
 
         <ImageButton
             android:id="@+id/ButtonDelete"
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bg_button"
+            android:background="@color/blueGray50"
             android:onClick="onClick"
             android:src="@drawable/button_backspace" />
     </LinearLayout>

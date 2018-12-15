@@ -2,27 +2,43 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
-        applicationId "com.luncher.santanu.dailer"
+        applicationId "com.luncher.bounjour.ringlerr"
         minSdkVersion 19
-        targetSdkVersion 27
-        versionCode 1
-        versionName "0.01"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        targetSdkVersion 28
+        versionCode 10000013
+        versionName "1.0.13"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true //important
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath false
+            }
+        }
     }
     buildTypes {
         release {
+            // debuggable true
             minifyEnabled false
+            //useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            debuggable true
+            minifyEnabled true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     buildscript {
         repositories {
             google()
+            maven { url 'http://dl.bintray.com/amulyakhare/maven' }
         }
     }
     useLibrary 'org.apache.http.legacy'
@@ -35,6 +51,7 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/INDEX.LIST'
     }
     lintOptions {
         checkReleaseBuilds false
@@ -42,41 +59,55 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+
+    dexOptions {
+        preDexLibraries = false
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.0.2'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.android.support:design:27.0.2'
-    implementation 'com.android.support:support-v4:27.0.2'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'com.google.android.material:material:1.1.0-alpha01'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'ja.burhanrashid52:photoeditor:0.1.0'
-    implementation 'com.android.support:support-emoji-bundled:27.0.2'
-    implementation 'com.google.firebase:firebase-auth:11.8.0'
-    implementation 'com.google.firebase:firebase-database:11.8.0'
+    implementation 'androidx.emoji:emoji-bundled:1.0.0'
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
+    implementation 'com.google.firebase:firebase-database:16.0.5'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.1'
     implementation 'com.google.code.gson:gson:2.8.2'
-    implementation 'com.google.firebase:firebase-storage:11.8.0'
+    implementation 'com.google.firebase:firebase-storage:16.0.5'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'com.github.nkzawa:socket.io-client:0.3.0'
-    compile 'com.hbb20:ccp:2.0.8'
-    compile 'com.felipecsl:gifimageview:2.2.0'
-    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    compile 'com.github.tamir7.contacts:contacts:1.1.7'
-    compile 'com.parse.bolts:bolts-tasks:1.4.0'
-    compile 'com.android.support:recyclerview-v7:27.0.2'
-    compile 'com.github.bumptech.glide:glide:4.0.0'
-    compile "com.android.support:support-emoji:27.0.2"
+    androidTestImplementation 'androidx.test:runner:1.1.1-beta01'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1-beta01'
+    implementation 'com.github.nkzawa:socket.io-client:0.3.0'
+    implementation 'com.hbb20:ccp:2.0.5'
+    implementation 'com.github.tamir7.contacts:contacts:1.1.7'
+    implementation 'com.parse.bolts:bolts-tasks:1.4.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha01'
+    implementation 'com.github.bumptech.glide:glide:4.0.0'
+    implementation 'androidx.emoji:emoji:1.0.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
-    compile 'com.firebaseui:firebase-ui:3.2.1'
-    compile 'com.github.ceryle:RadioRealButton:v2.1.1'
+    implementation 'com.firebaseui:firebase-ui:3.2.1'
+    implementation 'com.github.patgdut:RadioRealButton:v2.1.2'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.5.+'
-    compile 'com.android.support:multidex:1.0.3'
-    compile 'org.apache.httpcomponents:httpcore:4.4.1'
-    compile 'org.apache.httpcomponents:httpclient:4.5'
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.1'
+    implementation 'org.apache.httpcomponents:httpclient:4.5'
+    implementation 'com.google.code.gson:gson:2.3.1'
+    implementation 'commons-io:commons-io:2.4'
+    implementation 'com.github.zagum:SpeechRecognitionView:1.2.2'
+    implementation 'com.github.bassaer:chatmessageview:1.11.2'
+    implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    implementation 'com.github.Plumillon:ChipView:1.2.0'
+    implementation 'com.soundcloud.android:android-crop:1.0.1@aar'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
 
+    // butter knife
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
 }
 configurations {
     all {

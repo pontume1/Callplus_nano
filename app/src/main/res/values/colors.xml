@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#f50057</color>
-    <color name="colorPrimaryDark">#C51162</color>
-    <color name="textColorPrimary">#ffffff</color>
+    <color name="colorPrimary">#fa6377</color>
+    <color name="colorPrimaryDark">#fa6377</color>
+    <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#fffbce</color>
     <color name="navigationBarColor">#000000</color>
     <color name="colorAccent">#ff80ab</color>
-    <color name="colorPrimaryLite">#ff5160</color>
+    <color name="colorPrimaryLite">#fa6377</color>
     <color name="textIcon">#FFFFFF</color>
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>
     <color name="colorDivider">#BDBDBD</color>
     <color name="colorBackground">#e1e0e0</color>
 
-    <color name="black_overlay">#66000000</color>
+    <color name="black_overlay">#777777</color>
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
@@ -27,4 +27,23 @@
     <color name="violet_color_picker">#8359A3</color>
     <color name="yellow_color_picker">#FBE870</color>
     <color name="yellow_green_color_picker">#C5E17A</color>
+
+    <color name="color1">#f50057</color>
+    <color name="color2">#e9045a</color>
+    <color name="color3">#dd085d</color>
+    <color name="color4">#d10e61</color>
+
+    <array name="dot_on_page_active">
+        <item>#B71C1C</item>
+        <item>#8BC34A</item>
+        <item>#4A148C</item>
+        <item>#CCFF90</item>
+    </array>
+
+    <array name="dot_on_page_not_active">
+        <item>#FF5252</item>
+        <item>#CCFF90</item>
+        <item>#E040FB</item>
+        <item>#8BC34A</item>
+    </array>
 </resources>

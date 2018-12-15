@@ -63,7 +63,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="Reject With Reply" />
+        android:text="Reject With Reply"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

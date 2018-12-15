@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/spam"
+        android:title="Spam" />
+
+    <item
+        android:id="@+id/misleading"
+        android:title="Misleading/Fake" />
+    <item
+        android:id="@+id/harassment"
+        android:title="Harassment" />
+
+</menu>

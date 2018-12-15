@@ -1,15 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="100dp"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.luncher.santanu.dailer.LoginActivity">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.luncher.bounjour.ringlerr.LoginActivity">
 
     <!-- Login progress -->
     <ProgressBar
@@ -19,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
-
 
 
     <ScrollView
@@ -43,10 +44,12 @@
                     android:id="@+id/textView2"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
                     android:gravity="left"
-                    android:textColor="@color/textSecondary"
                     android:text="@string/conform_number"
-                    android:layout_marginTop="20dp" />
+                    android:textColor="@color/textSecondary"
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -58,9 +61,9 @@
                     android:id="@+id/ccp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:ccp_countryPreference="in"
-                    app:ccp_defaultNameCode="in"
-                    />
+                    app:ccp_customMasterCountries="IN"
+                    app:ccp_autoDetectCountry="false"
+                    app:ccp_defaultNameCode="IN" />
 
                 <EditText
                     android:id="@+id/editText_carrierNumber"
@@ -83,8 +86,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/action_sign_in"
                     android:background="@color/colorPrimaryDark"
+                    android:text="@string/action_sign_in"
                     android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 

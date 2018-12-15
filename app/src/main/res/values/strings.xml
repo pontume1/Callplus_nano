@@ -10,7 +10,9 @@
 
     <string name="action_block_list">Block List</string>
     <string name="action_add_dnd">Add DND</string>
-    <string name="action_add_reminder">My reminder</string>
+    <string name="action_add_reminder">My Reminder</string>
+    <string name="action_add_Scheduler">My Scheduler</string>
+    <string name="action_follow_us">Follow Us</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -26,9 +28,8 @@
         completions."
     </string>
 
-    <string name="title_activity_welcome">Welcome to Ringerrr</string>
+    <string name="title_activity_welcome">Welcome to</string>
     <string name="btn_agree">Agree And Continue</string>
-    <string name="description">Ringerrr is transforming today\'s phonebook to make it more intelligent and useful.</string>
     <string name="action_sign_in_short">Sign In Short</string>
 
     <string name="msg_sit_back">Sit back &amp; Relax! while we verify your mobile number</string>
@@ -36,7 +37,7 @@
     <string name="lbl_enter_otp">Enter OTP</string>
     <string name="lbl_submit">SUBMIT</string>
 
-    <string name="title_activity_animation">AnimationActivity</string>
+    <string name="title_activity_animation">Animation Activity</string>
 
     <string name="label_brush">Brush</string>
     <string name="label_emoji">Emoji</string>
@@ -47,8 +48,21 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="set_for_myswlf">Set for myself</string>
-    <string name="share_by">Share by</string>
+    <string name="share_by">Shared by</string>
     <string name="share_with">Shared with</string>
+
+    <string-array name="subjects">
+        <item>Message</item>
+        <item>Whatsapp</item>
+        <item>Facebook</item>
+    </string-array>
+
+    <string name="subject_label">Type</string>
+    <string name="next">Next</string>
+    <string name="you_have_no_data">No data available</string>
+    <string name="about_ringlerr">RINGLERR, mobile communication application is born with an idea of enabling users to connect faster and communicate on phone in real time.</string>
+    <string name="copyright_string" formatted="false">\u00A9 2018 JUV Technologies Private Limited. \n All rights reserved</string>
+    <string name="sugge" formatted="false">1) Call Vishal with message pick my call, it\'s very urgent. \n 2) I want to speak to Vishal for 1 min \n 3) Set up a reminder for Jay</string>
 
 
 </resources>

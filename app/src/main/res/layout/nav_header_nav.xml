@@ -26,25 +26,26 @@
             app:srcCompat="@drawable/logo_main" />
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/navImageView"
+            android:layout_width="59dp"
+            android:layout_height="67dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="29dp"
             android:layout_marginStart="17dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            app:srcCompat="@mipmap/ic_launcher_round" />
+            app:srcCompat="@drawable/ic_profile" />
 
         <TextView
+            android:id="@+id/menu_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="23dp"
-            android:layout_marginStart="97dp"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:text="Vishal"
+            android:layout_marginBottom="40dp"
+            android:layout_marginStart="82dp"
+            android:paddingTop="10dp"
+            android:text=""
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <!--TextView

@@ -23,19 +23,6 @@
             android:orientation="vertical"
             android:paddingBottom="35dp">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="5dp"
-                android:gravity="center_horizontal"
-                android:text="Reminder"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/phone"
@@ -75,6 +62,19 @@
             android:orientation="vertical"
             android:paddingTop="35dp">
 
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal"
+                android:text=""
+                android:textColor="@color/textPrimary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/date_time_sel"
@@ -247,29 +247,29 @@
             <Button
                 android:id="@+id/dialog_save"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="33dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/side_nav_bar"
+                android:background="@drawable/button_radius"
                 android:text="Save"
                 android:textColor="@color/textColorPrimary" />
 
             <Button
                 android:id="@+id/dialog_share"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="33dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/side_nav_bar"
+                android:background="@drawable/button_radius"
                 android:text="Share"
                 android:textColor="@color/textColorPrimary" />
 
             <Button
                 android:id="@+id/close_btn_reminder"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="33dp"
                 android:layout_margin="5dp"
-                android:background="@drawable/side_nav_bar"
+                android:background="@drawable/button_radius"
                 android:text="Cancel"
                 android:textColor="@color/textColorPrimary" />
 

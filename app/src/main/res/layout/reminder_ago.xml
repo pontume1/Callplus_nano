@@ -27,7 +27,7 @@
             android:layout_marginRight="4dp"
             android:layout_marginTop="5dp"
             android:gravity="center_horizontal"
-            android:text="Reminder Me Before"
+            android:text="Remind Me Before"
             android:textColor="@color/textColorPrimary"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -119,15 +119,17 @@
             app:rrb_drawableWidth="36dp"
             app:rrb_ripple="true"
             app:rrb_rippleColor="@color/black"
-            app:rrb_text="1 Hour"
+            app:rrb_text="1 Hr"
             app:rrb_textColor="@color/black" />
     </co.ceryle.radiorealbutton.RadioRealButtonGroup>
 
     <Button
         android:id="@+id/rem_ago_set"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/button_radius"
         android:text="Set"
-        android:layout_height="0dp" />
+        android:textColor="@color/textColorPrimary" />
 
 </LinearLayout>
