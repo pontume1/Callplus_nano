@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="70dp"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="330dp"
+        android:layout_height="match_parent"
+        android:background="@color/textColorPrimary">
+
+        <LinearLayout
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:height="100dp"
+            android:background="@drawable/side_nav_bar"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="35dp">
+
+
+            <!--<TextView-->
+                <!--android:id="@+id/phone"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_marginLeft="4dp"-->
+                <!--android:layout_marginRight="4dp"-->
+                <!--android:layout_marginTop="5dp"-->
+                <!--android:gravity="center_horizontal"-->
+                <!--android:text="Reminder"-->
+                <!--android:textColor="@color/textColorPrimary"-->
+                <!--android:textSize="13sp"-->
+                <!--android:textStyle="bold" />-->
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal"
+                android:text="Shared With"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:layout_above="@id/img"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="-22dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/disc_jockey" />
+
+
+        <LinearLayout
+            android:id="@+id/img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/info"
+            android:layout_marginBottom="1dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="35dp">
+
+            <TextView
+                android:id="@+id/date_time_sel"
+                android:layout_width="match_parent"
+                android:layout_height="22dp"
+                android:layout_gravity="left"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="5dp"
+                android:drawableLeft="@drawable/ic_calendar_new"
+                android:drawablePadding="5dp"
+                android:text="dt"
+                android:textColor="@color/textPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/time_sel"
+                android:layout_width="match_parent"
+                android:layout_height="22dp"
+                android:layout_centerHorizontal="false"
+                android:layout_gravity="left"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="5dp"
+                android:drawableLeft="@drawable/ic_watch_new"
+                android:drawablePadding="5dp"
+                android:text="time"
+                android:textColor="@color/textPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ago_sel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="5dp"
+                android:drawableLeft="@drawable/ic_remind"
+                android:drawablePadding="5dp"
+                android:text=""
+                android:textColor="@color/textPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/fec_sel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="left"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="5dp"
+                android:drawableLeft="@drawable/ic_repeat_new"
+                android:drawablePadding="5dp"
+                android:text="fec_sel"
+                android:textColor="@color/textPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/txtMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img"
+            android:layout_marginTop="1dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editTextDialogUserInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/a"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edittext_bg"
+                android:inputType="textMultiLine"
+                android:padding="6dp"
+                android:singleLine="true"
+                android:text="" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/icons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtMsg"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:visibility="visible">
+
+
+            <ImageButton
+                android:id="@+id/time_pick"
+                android:layout_width="25dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/watch_reminder"
+                android:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/date_pick"
+                android:layout_width="25dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/calendar_reminder"
+                android:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/btnRemindAgo"
+                android:layout_width="25dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/recycle_reminder" />
+
+            <ImageButton
+                android:id="@+id/btnRepeat"
+                android:layout_width="25dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/repeat_reminder" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/hrl"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/icons"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary" />
+
+        <LinearLayout
+            android:id="@+id/desition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/hrl"
+            android:layout_marginBottom="1dp"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/dialog_save"
+                android:layout_width="wrap_content"
+                android:layout_height="33dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_radius"
+                android:text="Save"
+
+                android:textColor="@color/textColorPrimary" />
+
+            <Button
+                android:id="@+id/dialog_share"
+                android:layout_width="wrap_content"
+                android:layout_height="33dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_radius"
+                android:text="Share"
+                android:textColor="@color/textColorPrimary" />
+
+            <Button
+                android:id="@+id/close_btn_reminder"
+                android:layout_width="wrap_content"
+                android:layout_height="33dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_radius"
+                android:text="Cancel"
+                android:textColor="@color/textColorPrimary" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

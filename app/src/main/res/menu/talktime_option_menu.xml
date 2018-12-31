@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/optionA"
+        android:title="0-30Sec" />
+
+    <item
+        android:id="@+id/optionB"
+        android:title="30Sec - 1Min" />
+
+    <item
+        android:id="@+id/optionC"
+        android:title="1Min - 2Min" />
+
+    <item
+        android:id="@+id/optionD"
+        android:title="2Min - 5Min" />
+
+    <item
+        android:id="@+id/optionE"
+        android:title="5Min - 10Min" />
+
+</menu>
