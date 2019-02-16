@@ -45,8 +45,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.luncher.bounjour.ringlerr.activity.ChatList;
+import com.luncher.bounjour.ringlerr.activity.ProfileActivity;
 import com.luncher.bounjour.ringlerr.activity.ReminderDialog;
-import com.luncher.bounjour.ringlerr.activity.SchedulerAlarmDialog;
 import com.luncher.bounjour.ringlerr.activity.addContact;
 import com.luncher.bounjour.ringlerr.activity.editContact;
 import com.luncher.bounjour.ringlerr.model.Blocks;
@@ -55,7 +55,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MyRecentAdapter extends RecyclerView.Adapter<MyRecentAdapter.ViewHolder> {
-    private final Animation animationUp, animationDown;;
+    private final Animation animationUp, animationDown;
     private List<String> values;
     private List<String> phone_no;
     private List<String> type;
@@ -95,23 +95,23 @@ public class MyRecentAdapter extends RecyclerView.Adapter<MyRecentAdapter.ViewHo
         public ViewHolder(View v) {
             super(v);
             layout = v;
-            txtHeader = (TextView) v.findViewById(R.id.firstLine);
-            txtFooter = (TextView) v.findViewById(R.id.secondLine);
-            call_type = (ImageView) v.findViewById(R.id.call_type_icon);
-            rCallButton = (ImageButton) v.findViewById(R.id.rCallButton);
-            callButton = (ImageButton) v.findViewById(R.id.callButton);
-            dnButton = (TextView) v.findViewById(R.id.dnButton);
-            slideView = (LinearLayout) v.findViewById(R.id.slideView);
-            main_layout = (LinearLayout) v.findViewById(R.id.main_layout);
-            profilePic = (ImageView) v.findViewById(R.id.profile_icon);
-            imageView2 = (ImageView) v.findViewById(R.id.imageView2);
-            whatsapp_btn = (ImageButton) v.findViewById(R.id.whatsapp_btn);
-            msgButton = (ImageButton) v.findViewById(R.id.msgButton);
-            addButton = (ImageButton) v.findViewById(R.id.addButton);
-            blockButton = (ImageButton) v.findViewById(R.id.blockButton);
-            editButton = (ImageButton) v.findViewById(R.id.editButton);
-            reminderButton = (ImageButton) v.findViewById(R.id.reminderButton);
-            deleteButton = (ImageButton) v.findViewById(R.id.deleteButton);
+            txtHeader = v.findViewById(R.id.firstLine);
+            txtFooter = v.findViewById(R.id.secondLine);
+            call_type = v.findViewById(R.id.call_type_icon);
+            rCallButton = v.findViewById(R.id.rCallButton);
+            callButton = v.findViewById(R.id.callButton);
+            dnButton = v.findViewById(R.id.dnButton);
+            slideView = v.findViewById(R.id.slideView);
+            main_layout = v.findViewById(R.id.main_layout);
+            profilePic = v.findViewById(R.id.profile_icon);
+            imageView2 = v.findViewById(R.id.imageView2);
+            whatsapp_btn = v.findViewById(R.id.whatsapp_btn);
+            msgButton = v.findViewById(R.id.msgButton);
+            addButton = v.findViewById(R.id.addButton);
+            blockButton = v.findViewById(R.id.blockButton);
+            editButton = v.findViewById(R.id.editButton);
+            reminderButton = v.findViewById(R.id.reminderButton);
+            deleteButton = v.findViewById(R.id.deleteButton);
         }
     }
 
@@ -191,7 +191,7 @@ public class MyRecentAdapter extends RecyclerView.Adapter<MyRecentAdapter.ViewHo
             holder.slideView.setVisibility(View.VISIBLE);
         }
 
-        MyDbHelper myDbHelper = new MyDbHelper(context, null, null, 1);
+        MyDbHelper myDbHelper = new MyDbHelper(context, null, 1);
         Boolean is_ringlerr = myDbHelper.checkRinglerrUser(phone);
         Boolean file_exist = false;
 
@@ -280,7 +280,11 @@ public class MyRecentAdapter extends RecyclerView.Adapter<MyRecentAdapter.ViewHo
 
         });
 
-        if(type_call.equals("1")){
+
+        String block_number = myDbHelper.checkBlockNumber(phone);
+        if(!block_number.equals("null")){
+            holder.call_type.setImageResource(R.drawable.block);
+        }else if(type_call.equals("1")){
             holder.call_type.setImageResource(R.drawable.icon_2);
         }else if(type_call.equals("2")){
             holder.call_type.setImageResource(R.drawable.icon_3);
@@ -315,8 +319,8 @@ public class MyRecentAdapter extends RecyclerView.Adapter<MyRecentAdapter.ViewHo
                @Override
                public void onClick(View v) {
                    final Intent intent1 = new Intent(context, ChatList.class);
-//                   intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                   intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                   intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                   intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                    intent1.putExtra("phone_no", phone);
                    intent1.putExtra("name", name);
                    //context.startActivity(intent1);
@@ -339,6 +343,14 @@ public class MyRecentAdapter extends RecyclerView.Adapter<MyRecentAdapter.ViewHo
                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                @Override public void onClick(DialogInterface dialog, int which) {
                                    Long tsLong = System.currentTimeMillis()/1000;
+
+                                   MyDbHelper myDbHelper;
+                                   myDbHelper = new MyDbHelper(context, null, 1);
+                                   String bnumber = myDbHelper.checkBlockNumber(phone);
+                                   if(!bnumber.equals("null")){
+                                       Toast.makeText(context, name+" is already in your block list", Toast.LENGTH_SHORT).show();
+                                       return;
+                                   }
 
                                    final DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
                                    SessionManager session = new SessionManager(context);
@@ -377,9 +389,9 @@ public class MyRecentAdapter extends RecyclerView.Adapter<MyRecentAdapter.ViewHo
                                                }
                                            });
 
-                                   MyDbHelper myDbHelper;
-                                   myDbHelper = new MyDbHelper(context, null, null, 1);
                                    myDbHelper.addBlockNumber(phone);
+
+                                   Toast.makeText(context, name+" added to your block list", Toast.LENGTH_SHORT).show();
 
                                }
                            })
@@ -399,6 +411,24 @@ public class MyRecentAdapter extends RecyclerView.Adapter<MyRecentAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 editContact(phone, name, contact_ids, context);
+            }
+        });
+
+        holder.profilePic.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent1 = new Intent(context, ProfileActivity.class);
+//                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent1.putExtra("phone_no", phone);
+                intent1.putExtra("name", name);
+                //context.startActivity(intent1);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        context.startActivity(intent1);
+                    }
+                }, 100);
             }
         });
 

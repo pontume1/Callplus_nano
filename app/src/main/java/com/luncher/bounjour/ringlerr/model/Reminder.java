@@ -13,9 +13,11 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class Reminder {
 
+    public int id;
     public String from;
     public String to;
     public String message;
+    public String reminderKey;
     public Long time;
     public Integer remindAgo;
     public String shared_with;
@@ -31,7 +33,7 @@ public class Reminder {
     public Reminder() {
     }
 
-    public Reminder(String from, String to, String message, Long time, Integer remindAgo, String shared_with, Boolean is_deleted, String is_accepted, Boolean is_seen, String datetime, Boolean taken) {
+    public Reminder(String from, String to, String message, Long time, Integer remindAgo, String shared_with, Boolean is_deleted, String is_accepted, Boolean is_seen, String datetime, Boolean taken, String reminderKey) {
         this.from = from;
         this.to = to;
         this.message = message;
@@ -43,8 +45,12 @@ public class Reminder {
         this.is_seen = is_seen;
         this.datetime = datetime;
         this.taken = taken;
+        this.reminderKey = reminderKey;
     }
 
+    public int getId() {
+        return id;
+    }
     public String getMessage() {
         return message;
     }
@@ -63,6 +69,9 @@ public class Reminder {
     public Long getTime() {
         return time;
     }
+    public Integer getRemindAgo() {
+        return remindAgo;
+    }
     public String getReminderTime() {
         return datetime;
     }
@@ -70,13 +79,27 @@ public class Reminder {
         return taken;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setMessage(String message) {
         this.message = message;
     }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
+    public void setShared_with(String shared_with) {
+        this.shared_with = shared_with;
     }
+    public void setTime(Long time) {
+        this.time = time;
+    }
+    public void setSelected(boolean selected) {
+        this.isSelected = selected;
+    }
+    public void setRemindAgo(int remindAgo) {
+        this.remindAgo = remindAgo;
+    }
+    public void setIs_accepted(String is_accepted){ this.is_accepted = is_accepted; }
+    public void setFrom(String from){ this.from = from; }
+    public void setReminderKey(String reminderKey){ this.reminderKey = reminderKey; }
 
 
     public boolean isSelected() {
@@ -100,4 +123,5 @@ public class Reminder {
 
         return result;
     }
+
 }

@@ -25,7 +25,7 @@ public class callEndDialog extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.empty);
 
-        empty_layout = (LinearLayout) findViewById(R.id.empty_layout);
+        empty_layout = findViewById(R.id.empty_layout);
         this.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         //this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);

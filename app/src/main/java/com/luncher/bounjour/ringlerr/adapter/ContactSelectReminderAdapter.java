@@ -52,10 +52,10 @@ public class ContactSelectReminderAdapter extends RecyclerView.Adapter<ContactSe
         public ViewHolder(View v) {
             super(v);
             layout = v;
-            profilePic = (ImageView) v.findViewById(R.id.icon);
-            txtHeader = (TextView) v.findViewById(com.luncher.bounjour.ringlerr.R.id.firstLine);
-            txtFooter = (TextView) v.findViewById(com.luncher.bounjour.ringlerr.R.id.secondLine);
-            imageView2 = (ImageView) v.findViewById(R.id.imageView2);
+            profilePic = v.findViewById(R.id.icon);
+            txtHeader = v.findViewById(R.id.firstLine);
+            txtFooter = v.findViewById(R.id.secondLine);
+            imageView2 = v.findViewById(R.id.imageView2);
         }
     }
 
@@ -107,7 +107,7 @@ public class ContactSelectReminderAdapter extends RecyclerView.Adapter<ContactSe
         boolean is_num_sel = isSelected.get(position);
         Boolean file_exist = false;
 
-        MyDbHelper myDbHelper = new MyDbHelper(context, null, null, 1);
+        MyDbHelper myDbHelper = new MyDbHelper(context, null, 1);
         Boolean is_ringlerr = myDbHelper.checkRinglerrUser(phone);
 
         holder.imageView2.setVisibility(View.GONE);

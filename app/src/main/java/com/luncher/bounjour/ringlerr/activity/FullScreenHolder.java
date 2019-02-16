@@ -1,63 +1,100 @@
 package com.luncher.bounjour.ringlerr.activity;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
+import android.util.Base64;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.luncher.bounjour.ringlerr.R;
+
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class FullScreenHolder extends AppCompatActivity {
 
+    String phone_no;
+    String name;
     String image;
     String type;
     String screen_type;
     String talk_time;
-    ImageView r_image;
     ImageView photoView;
     ProgressBar loading;
     ImageButton thumbUpButton;
     ImageButton thumbDownButton;
     Button reject_button;
+    TextView name_view;
     public static AppCompatActivity fsh;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.setFinishOnTouchOutside(false);
         super.onCreate(savedInstanceState);
         fsh = this;
 
-        screen_type = getIntent().getExtras().getString("screen_type");
-        if(screen_type.equals("half")){
+        screen_type = Objects.requireNonNull(getIntent().getExtras()).getString("screen_type");
+        type = getIntent().getExtras().getString("type");
+        assert screen_type != null;
+        if(screen_type.equals("half") || screen_type.equals("sender_full")){
             setContentView(R.layout.popup_photo_half);
         }else{
+            if(type.equals("snap")) {
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+            }
             setContentView(R.layout.popup_photo_full);
         }
 
-        r_image = (ImageView) findViewById(R.id.r_image);
-        photoView = (ImageView) findViewById(R.id.image);
-        loading = (ProgressBar) findViewById(R.id.loading);
-        ImageButton closeButton = (ImageButton) findViewById(R.id.ib_close);
-        thumbUpButton = (ImageButton) findViewById(R.id.thumbUpButton);
-        thumbDownButton = (ImageButton) findViewById(R.id.thumbDownButton);
-        reject_button = (Button) findViewById(R.id.reject);
+        name_view = findViewById(R.id.name);
+        photoView = findViewById(R.id.image);
+        loading = findViewById(R.id.loading);
+        ImageButton closeButton = findViewById(R.id.ib_close);
+        thumbUpButton = findViewById(R.id.thumbUpButton);
+        thumbDownButton = findViewById(R.id.thumbDownButton);
+        reject_button = findViewById(R.id.reject);
 
+        phone_no = getIntent().getExtras().getString("phone_no");
         image = getIntent().getExtras().getString("image");
-        type = getIntent().getExtras().getString("type");
         talk_time = getIntent().getExtras().getString("talk_time");
 
+        name = getContactName(this, phone_no);
+
+        if(null != name_view) {
+            if (name == null) {
+                getName();
+            } else {
+                if(type.equals("snap")){
+                    name_view.setText(name + " snap calling..");
+                }else {
+                    name_view.setText(name + " calling..");
+                }
+            }
+        }
+
+        assert talk_time != null;
         if(!talk_time.equals("")){
             reject_button.setVisibility(View.VISIBLE);
             reject_button.setText("Talk time "+talk_time);
@@ -98,32 +135,109 @@ public class FullScreenHolder extends AppCompatActivity {
             }
         });
 
-        String imageStoragePath = Environment.getExternalStorageDirectory() + "/ringerrr/Images/"+image;
-
         loading.setVisibility(View.GONE);
-        if(type.equals("gif")) {
-            Glide.with(this).asGif()
-                    .load(Uri.parse(imageStoragePath))
-                    .into(photoView);
+        label:
+        switch (type) {
+            case "jpg": {
+                switch (screen_type) {
+                    case "half":
+                        Glide.with(this)
+                                .load(image)
+                                .into(photoView);
+                        break;
+                    case "sender_full":
+                        byte[] imageByteArray = Base64.decode(image, Base64.DEFAULT);
+                        Glide.with(this)
+                                .load(imageByteArray)
+                                .into(photoView);
+                        break label;
+                    default:
+                        String imageStoragePath = Environment.getExternalStorageDirectory() + "/ringerrr/Images/" + image;
+                        Glide.with(this)
+                                .load(imageStoragePath)
+                                .into(photoView);
+                        break;
+                }
+            }
+            break;
+            case "gif":
+                String imageStoragePath = Environment.getExternalStorageDirectory() + "/ringerrr/Images/" + image;
+                Glide.with(this).asGif()
+                        .load(Uri.parse(imageStoragePath))
+                        .into(photoView);
 
-        }else if (type.equals("libgif")) {
+                break;
+            case "libgif": {
 
-            String asseturl = Environment.getExternalStorageDirectory() + "/ringerrr/animation/" + image;
-            Glide.with(this).asGif()
-                    .load(asseturl)
-                    .into(photoView);
-        } else if (type.equals("sticker")) {
-            String asseturl = Environment.getExternalStorageDirectory() + "/ringerrr/stickers/" + image;
-            Glide.with(this)
-                    .load(asseturl)
-                    .into(photoView);
-        } else {
-            //File imageFile = new File(imageStoragePath);
-            Bitmap bitmapz = BitmapFactory.decodeFile(imageStoragePath);
-            //bitmap = Bitmap.createScaledBitmap(bitmap, 120, 120, false);
-            photoView.setImageBitmap(bitmapz);
+                String asseturl = Environment.getExternalStorageDirectory() + "/ringerrr/animation/" + image;
+                Glide.with(this).asGif()
+                        .load(asseturl)
+                        .into(photoView);
+                break;
+            }
+            case "sticker": {
+                String asseturl = Environment.getExternalStorageDirectory() + "/ringerrr/stickers/" + image;
+                Glide.with(this)
+                        .load(asseturl)
+                        .into(photoView);
+                break;
+            }
+            default:
+                byte[] imageByteArray = Base64.decode(image, Base64.DEFAULT);
+                Glide.with(this)
+                        .load(imageByteArray)
+                        .into(photoView);
+                break;
         }
 
         loading.setVisibility(View.GONE);
+    }
+
+    private void getName() {
+        DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference rootRef = mRootRef.child("identity/"+ phone_no +"/name");
+        rootRef.addListenerForSingleValueEvent(
+            new ValueEventListener() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Object count = dataSnapshot.getValue();
+                    String name = "";
+                    if(count!=null){
+                        name = count.toString();
+                    }
+                    name_view.setText(name+" calling..");
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        fsh = null;
+    }
+
+    public static String getContactName(Context context, String phoneNumber) {
+        ContentResolver cr = context.getContentResolver();
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+        Cursor cursor = cr.query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+        if (cursor == null) {
+            return null;
+        }
+        String contactName = null;
+        if(cursor.moveToFirst()) {
+            contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
+        }
+
+        if(!cursor.isClosed()) {
+            cursor.close();
+        }
+
+        return contactName;
     }
 }

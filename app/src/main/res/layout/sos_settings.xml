@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/scheduler_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <RelativeLayout
+            android:id="@+id/scheduler_person_relative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/cardbackground">
+
+            <ImageView
+                android:id="@+id/scheduler_person_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_margin="10dp"
+                android:src="@drawable/my_profile" />
+
+            <TextView
+                android:id="@+id/scheduler_person_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/scheduler_person_image"
+                android:text="PRIMARY RINGLERR CONTACT"
+                android:textSize="15dp" />
+
+            <ImageView
+                android:id="@+id/scheduler_second_person_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/scheduler_person_image"
+                android:layout_margin="10dp"
+                android:src="@drawable/my_profile" />
+
+            <TextView
+                android:id="@+id/scheduler_second_person_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/scheduler_person_image"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/scheduler_second_person_image"
+                android:text="SECONDARY RINGLERR CONTACT"
+                android:textSize="15dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/scheduler_date_relative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/scheduler_person_relative"
+            android:layout_margin="5dp"
+            android:background="@drawable/cardbackground"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <EditText
+                android:id="@+id/scheduler_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bordernone"
+                android:gravity="top|left"
+                android:hint="Enter Your Message"
+                android:inputType="textMultiLine"
+                android:lines="3"
+                android:maxLines="3"
+                android:minLines="3"
+
+                android:scrollbars="vertical" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/scheduler_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/scheduler_date_relative"
+            android:layout_margin="5dp">
+
+            <Button
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="5dp"
+                android:background="@drawable/border_radius"
+                android:padding="7dp"
+                android:text="SAVE"
+                android:textColor="#FFFFFF"
+                android:textSize="18dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/scheduler_disclaimer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/scheduler_save"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:id="@+id/scheduler_disclaimer_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:paddingTop="100dp"
+                android:text="* Choose Ringlerr contact to experience fastest communication with live location updates"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</ScrollView>

@@ -4,8 +4,6 @@ package com.luncher.bounjour.ringlerr.activity;
  * Created by santanu on 11/11/17.
  */
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -45,12 +43,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import co.ceryle.radiorealbutton.RadioRealButton;
-import co.ceryle.radiorealbutton.RadioRealButtonGroup;
 
 public class SchedulerEditDialog extends AppCompatActivity {
     TextView name;
@@ -86,11 +81,6 @@ public class SchedulerEditDialog extends AppCompatActivity {
     int remindAgo = 0;
     String remUnit;
 
-    private ImageView profile_image;
-
-    private String mPhoneNo;
-    private String mName;
-
     AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     static final int PICK_CONTACT_REQUEST = 1;
@@ -113,28 +103,28 @@ public class SchedulerEditDialog extends AppCompatActivity {
         SessionManager session = new SessionManager(this);
         // get user data from session
         HashMap<String, String> user = session.getUserDetails();
-        mPhoneNo = user.get(SessionManager.KEY_PHONE);
-        mName = user.get(SessionManager.KEY_NAME);
+        String mPhoneNo = user.get(SessionManager.KEY_PHONE);
+        String mName = user.get(SessionManager.KEY_NAME);
 
         setContentView(R.layout.activity_scheduler);
 
-        profile_image = (ImageView) findViewById(R.id.profile_image);
-        scheduler_person_text = (TextView) findViewById(R.id.scheduler_person_text);
-        scheduler_date_image = (ImageView) findViewById(R.id.scheduler_date_image);
-        shceduler_time_image = (ImageView) findViewById(R.id.shceduler_time_image);
-        scheduler_time_text = (TextView) findViewById(R.id.scheduler_time_text);
-        ago_sel = (EditText) findViewById(R.id.ago_sel);
-        scheduler_date_text = (TextView) findViewById(R.id.scheduler_date_text);
-        closeButton = (Button) findViewById(R.id.close_btn_reminder);
-        dialog_contact   = (ImageView) findViewById(R.id.scheduler_person_image);
-        scheduler_message_icon   = (ImageView) findViewById(R.id.scheduler_message_icon);
-        scheduler_whatsapp_icon   = (ImageView) findViewById(R.id.scheduler_whatsapp_icon);
-        scheduler_facebook_icon   = (ImageView) findViewById(R.id.scheduler_facebook_icon);
-        dialog_save   = (Button) findViewById(R.id.save);
-        sendMgs = (EditText)findViewById(R.id.scheduler_message);
+        ImageView profile_image = findViewById(R.id.profile_image);
+        scheduler_person_text = findViewById(R.id.scheduler_person_text);
+        scheduler_date_image = findViewById(R.id.scheduler_date_image);
+        shceduler_time_image = findViewById(R.id.shceduler_time_image);
+        scheduler_time_text = findViewById(R.id.scheduler_time_text);
+        ago_sel = findViewById(R.id.ago_sel);
+        scheduler_date_text = findViewById(R.id.scheduler_date_text);
+        closeButton = findViewById(R.id.close_btn_reminder);
+        dialog_contact   = findViewById(R.id.scheduler_person_image);
+        scheduler_message_icon   = findViewById(R.id.scheduler_message_icon);
+        scheduler_whatsapp_icon   = findViewById(R.id.scheduler_whatsapp_icon);
+        scheduler_facebook_icon   = findViewById(R.id.scheduler_facebook_icon);
+        dialog_save   = findViewById(R.id.save);
+        sendMgs = findViewById(R.id.scheduler_message);
 
         //initiate a check box
-        scheduler_prompt_toggle = (Switch) findViewById(R.id.scheduler_prompt_toggle);
+        scheduler_prompt_toggle = findViewById(R.id.scheduler_prompt_toggle);
 
         alarm_mgs = getIntent().getExtras().getString("alarm_mgs");
         phone_no = getIntent().getExtras().getString("phone");
@@ -419,7 +409,7 @@ public class SchedulerEditDialog extends AppCompatActivity {
 
                 phone_no = phone_no.replace(" ", "");
 
-                MyDbHelper myDbHelper = new MyDbHelper(SchedulerEditDialog.this, null, null, 1);
+                MyDbHelper myDbHelper = new MyDbHelper(SchedulerEditDialog.this, null, 1);
                 myDbHelper.updateSchedule(id, c_name, spinner_type, "", phone_no, message, time, is_manual);
                 long Id = id;
 
@@ -459,7 +449,7 @@ public class SchedulerEditDialog extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time_picker_r);
+                TimePicker timePicker = dialogView.findViewById(R.id.time_picker_r);
 
                 hour = timePicker.getCurrentHour();
                 minute = timePicker.getCurrentMinute();
@@ -487,7 +477,7 @@ public class SchedulerEditDialog extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                DatePicker datePicker = (DatePicker) dialogView.findViewById(R.id.date_picker);
+                DatePicker datePicker = dialogView.findViewById(R.id.date_picker);
                 year = datePicker.getYear();
                 month = datePicker.getMonth();
                 day = datePicker.getDayOfMonth();
@@ -580,7 +570,7 @@ public class SchedulerEditDialog extends AppCompatActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 // Log.d(TAG, String.valueOf(bitmap));
 
-                ImageView imageView = (ImageView) findViewById(R.id.imageView);
+                ImageView imageView = findViewById(R.id.imageView);
                 imageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();

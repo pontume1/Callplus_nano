@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,9 +99,10 @@ public class photoEditor extends AppCompatActivity implements OnPhotoEditorListe
         Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         // Initialize a new ByteArrayStream
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG,50,stream);
-        Bitmap bMapScaled = resize(bmp, 600, 600);
+        bmp.compress(Bitmap.CompressFormat.JPEG,85,stream);
+        Bitmap bMapScaled = resize(bmp, 1280, 1280);
         mPhotoEditorView.getSource().setImageBitmap(bMapScaled);
+        //mPhotoEditorView.getSource().setImageBitmap(bmp);
 
         initViews();
 
@@ -160,7 +162,7 @@ public class photoEditor extends AppCompatActivity implements OnPhotoEditorListe
         ImageView imgGallery;
         ImageView imgSticker;
         ImageView imgEmo;
-        ImageView imgSave;
+        ImageButton imgSave;
 
         mPhotoEditorView = findViewById(R.id.photoEditorView);
         mTxtCurrentTool = findViewById(R.id.txtCurrentTool);
@@ -217,6 +219,11 @@ public class photoEditor extends AppCompatActivity implements OnPhotoEditorListe
     @Override
     public void onRemoveViewListener(int numberOfAddedViews) {
         Log.d(TAG, "onRemoveViewListener() called with: numberOfAddedViews = [" + numberOfAddedViews + "]");
+    }
+
+    @Override
+    public void onRemoveViewListener(ViewType viewType, int numberOfAddedViews) {
+
     }
 
     @Override

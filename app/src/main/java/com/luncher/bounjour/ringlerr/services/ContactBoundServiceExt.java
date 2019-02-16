@@ -10,8 +10,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -21,26 +19,19 @@ import android.provider.ContactsContract;
 import com.github.tamir7.contacts.Contact;
 import com.github.tamir7.contacts.Contacts;
 import com.github.tamir7.contacts.Query;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.luncher.bounjour.ringlerr.MainActivity;
 import com.luncher.bounjour.ringlerr.MyDbHelper;
 import com.luncher.bounjour.ringlerr.R;
 import com.luncher.bounjour.ringlerr.SessionManager;
 import com.luncher.bounjour.ringlerr.model.Identity;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -114,7 +105,7 @@ public class ContactBoundServiceExt extends IntentService {
         q.hasPhoneNumber();
         contacts = q.find();
 
-        myDbHelper = new MyDbHelper(getApplicationContext(), null, null, 1);
+        myDbHelper = new MyDbHelper(getApplicationContext(), null, 1);
 
         for (int i = 0; i < contacts.size(); i++) {
 
@@ -140,7 +131,7 @@ public class ContactBoundServiceExt extends IntentService {
                         Identity userIdentity = snapshot.getValue(Identity.class);
                         if (userIdentity != null) {
                             // run some code
-                            MyDbHelper myDbHelper = new MyDbHelper(getBaseContext(), null, null, 1);
+                            MyDbHelper myDbHelper = new MyDbHelper(getBaseContext(), null, 1);
                             Boolean is_ringlerr = myDbHelper.checkRinglerrUser(phone_no);
 
                             if(userIdentity.app_remove!=null) {
@@ -149,7 +140,7 @@ public class ContactBoundServiceExt extends IntentService {
                                     if (null != mFt) {
                                         String name = getContactName(getApplicationContext(), phone_no);
                                         String notiMgs = name + " is now on Ringlerr";
-                                        setAlarm(notiMgs, "Ringlerr Reminder");
+                                        setAlarm(notiMgs, "Ringlerr Update");
                                     }
                                 } else if (is_ringlerr && userIdentity.app_remove == true) {
                                     //delete from database
@@ -161,7 +152,7 @@ public class ContactBoundServiceExt extends IntentService {
                                     if (null != mFt) {
                                         String name = getContactName(getApplicationContext(), phone_no);
                                         String notiMgs = name + " is now on Ringlerr";
-                                        setAlarm(notiMgs, "Ringlerr Reminder");
+                                        setAlarm(notiMgs, "Ringlerr Update");
                                     }
                                 }
                             }

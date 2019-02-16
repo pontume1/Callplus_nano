@@ -1,9 +1,11 @@
 package com.luncher.bounjour.ringlerr;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
@@ -11,8 +13,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.ContactsContract;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.telecom.TelecomManager;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -24,9 +25,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.luncher.bounjour.ringlerr.activity.FullScreenHolder;
+import com.luncher.bounjour.ringlerr.activity.FullScreenVideoHolder;
+import com.luncher.bounjour.ringlerr.activity.MySosCustomDialog;
 import com.luncher.bounjour.ringlerr.activity.callEndDialog;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * Created by santanu on 11/11/17.
@@ -34,17 +40,35 @@ import androidx.core.content.ContextCompat;
 
 public class CallReceiver extends PhonecallReceiver {
 
-    private WindowManager wm;
-    private static LinearLayout ly1;
-    private WindowManager.LayoutParams params1;
     ArrayList message;
     MyDbHelper myDbHelper;
-    Boolean isRingerrrUser = true;
     private DatabaseReference mRootRef;
-    SessionManager session;
 
     @Override
     protected void onIncomingCallStarted(final Context ctx, final String number, final Date start) {
+
+        Boolean is_block = false;
+        String number_s = number.replace(" ", "");
+        number_s = "+91"+getLastnCharacters(number_s, 10);
+        myDbHelper = new MyDbHelper(ctx, null, 1);
+
+        String block_number = myDbHelper.checkBlockNumber(number_s);
+        if(!block_number.equals("null")){
+            is_block = true;
+            TelecomManager tm;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                tm = (TelecomManager)ctx.getSystemService(Context.TELECOM_SERVICE);
+                if (tm == null) {
+                    throw new NullPointerException("tm == null");
+                }
+                if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ANSWER_PHONE_CALLS) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                tm.endCall();
+            } else {
+                disconnectPhoneItelephony(ctx);
+            }
+        }
 
         Boolean service_running = isMyServiceRunning(MessageService.class, ctx);
         if(!service_running){
@@ -55,32 +79,42 @@ public class CallReceiver extends PhonecallReceiver {
                 ctx.startService(serviceIntent);
             }
 
+            final Boolean finalIs_block = is_block;
             new Handler().postDelayed(new Runnable() {
                 public void run() {
-                    doShowMessage(ctx, number, start);
+                    doShowMessage(ctx, number, start, finalIs_block);
                 }
             }, 5000);
 
         }else{
-            doShowMessage(ctx, number, start);
+            doShowMessage(ctx, number, start, is_block);
         }
 
     }
 
     @Override
     protected void onOutgoingCallStarted(Context ctx, String number, Date start) {
-        myDbHelper = new MyDbHelper(ctx, null, null, 1);
+        myDbHelper = new MyDbHelper(ctx, null, 1);
 
         String block_number = myDbHelper.checkBlockNumber(number);
         if(!block_number.equals("null")) {
-            disconnectPhoneItelephony(ctx);
+            TelecomManager tm;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                tm = (TelecomManager)ctx.getSystemService(Context.TELECOM_SERVICE);
+                tm.endCall();
+            } else {
+                disconnectPhoneItelephony(ctx);
+            }
         }
     }
 
     @Override
     protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {
 
-        String name = getContactName(ctx, number);
+        String name = "";
+        if(mayRequestContacts(ctx)) {
+            name = getContactName(ctx, number);
+        }
         final Intent call_end = new Intent(ctx, callEndDialog.class);
         call_end.putExtra("phone_no", number);
         call_end.putExtra("name", name);
@@ -96,7 +130,10 @@ public class CallReceiver extends PhonecallReceiver {
     @Override
     protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
 
-        String name = getContactName(ctx, number);
+        String name = "";
+        if(mayRequestContacts(ctx)) {
+            name = getContactName(ctx, number);
+        }
         final Intent call_end = new Intent(ctx, callEndDialog.class);
         call_end.putExtra("phone_no", number);
         call_end.putExtra("name", name);
@@ -112,7 +149,10 @@ public class CallReceiver extends PhonecallReceiver {
     @Override
     protected void onMissedCall(Context ctx, String number, Date start) {
 
-        String name = getContactName(ctx, number);
+        String name = "";
+        if(mayRequestContacts(ctx)) {
+            name = getContactName(ctx, number);
+        }
         final Intent call_end = new Intent(ctx, callEndDialog.class);
         call_end.putExtra("phone_no", number);
         call_end.putExtra("name", name);
@@ -124,16 +164,19 @@ public class CallReceiver extends PhonecallReceiver {
         ctx.startActivity(call_end);
     }
 
-    private void doShowMessage(final Context ctx, String number_s, Date start){
+    private boolean mayRequestContacts(Context ctx) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        return ctx.checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
+
+    }
+
+    private void doShowMessage(final Context ctx, String number_s, Date start, Boolean is_block){
 
         number_s = number_s.replace(" ", "");
         final String number = "+91"+getLastnCharacters(number_s, 10);
-        myDbHelper = new MyDbHelper(ctx, null, null, 1);
-
-        String block_number = myDbHelper.checkBlockNumber(number);
-        if(!block_number.equals("null")){
-            disconnectPhoneItelephony(ctx);
-        }else {
+        if(!is_block){
 
             message = myDbHelper.getMessage(number);
 
@@ -174,7 +217,36 @@ public class CallReceiver extends PhonecallReceiver {
 
                 } else {
 
-                    if (cmessage.equals("") || cmessage == null) {
+                    if(type.equals("vid")){
+
+                        if(FullScreenHolder.fsh != null){
+                            FullScreenHolder.fsh.finish();
+                        }
+                        if(AnimationActivity.aa != null){
+                            AnimationActivity.aa.finish();
+                        }
+                        final Intent intent = new Intent(ctx, FullScreenVideoHolder.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        }
+                        intent.putExtra("phone_no", number);
+                        intent.putExtra("message", cmessage);
+                        intent.putExtra("image", image);
+                        intent.putExtra("type", type);
+                        intent.putExtra("talk_time", talk_time);
+                        intent.putExtra("screen_type", "full");
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ctx.startActivity(intent);
+                            }
+                        }, 2000);
+
+                    }else if (cmessage.equals("") || cmessage == null || type.equals("snap")) {
                         if(FullScreenHolder.fsh != null){
                             FullScreenHolder.fsh.finish();
                         }
@@ -202,7 +274,35 @@ public class CallReceiver extends PhonecallReceiver {
                             }
                         }, 2000);
 
-                    } else {
+                    } else if(type.equals("sos")){
+                        if(MyCustomDialog.fa != null){
+                            MyCustomDialog.fa.finish();
+                        }
+
+                        if(MySosCustomDialog.sfa != null){
+                            MySosCustomDialog.sfa.finish();
+                        }
+                        final Intent intent = new Intent(ctx, MySosCustomDialog.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        }
+                        intent.putExtra("phone_no", number);
+                        intent.putExtra("message", cmessage);
+                        intent.putExtra("image", image);
+                        intent.putExtra("type", type);
+                        intent.putExtra("talk_time", talk_time);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ctx.startActivity(intent);
+                            }
+                        }, 1500);
+                    }else {
                         if(MyCustomDialog.fa != null){
                             MyCustomDialog.fa.finish();
                         }
@@ -228,7 +328,7 @@ public class CallReceiver extends PhonecallReceiver {
                         }, 1500);
                     }
                 }
-            }else {
+            }else{
 
                 mRootRef = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference blockrootRef = mRootRef.child("block_count/"+ number +"/count");

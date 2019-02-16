@@ -44,7 +44,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import static com.luncher.bounjour.ringlerr.activity.MyDexApplication.CHANNEL_ID;
 import static com.luncher.bounjour.ringlerr.activity.MyDexApplication.CHANNEL_ID_BOUND;
 
 public class ContactBoundService extends IntentService {
@@ -112,7 +111,7 @@ public class ContactBoundService extends IntentService {
         q.hasPhoneNumber();
         contacts = q.find();
 
-        myDbHelper = new MyDbHelper(getApplicationContext(), null, null, 1);
+        myDbHelper = new MyDbHelper(getApplicationContext(), null, 1);
 
         for (int i = 0; i < contacts.size(); i++) {
 
@@ -138,7 +137,7 @@ public class ContactBoundService extends IntentService {
                         Identity userIdentity = snapshot.getValue(Identity.class);
                         if (userIdentity != null) {
                             // run some code
-                            MyDbHelper myDbHelper = new MyDbHelper(getBaseContext(), null, null, 1);
+                            MyDbHelper myDbHelper = new MyDbHelper(getBaseContext(), null, 1);
                             Boolean is_ringlerr = myDbHelper.checkRinglerrUser(phone_no);
 
                             if(userIdentity.app_remove!=null) {
@@ -147,7 +146,7 @@ public class ContactBoundService extends IntentService {
                                     if (null != mFt) {
                                         String name = getContactName(getApplicationContext(), phone_no);
                                         String notiMgs = name + " is now on Ringlerr";
-                                        setAlarm(notiMgs, "Ringlerr Reminder");
+                                        setAlarm(notiMgs, "Ringlerr Update");
                                     }
                                 } else if (is_ringlerr && userIdentity.app_remove == true) {
                                     //delete from database
@@ -159,7 +158,7 @@ public class ContactBoundService extends IntentService {
                                     if (null != mFt) {
                                         String name = getContactName(getApplicationContext(), phone_no);
                                         String notiMgs = name + " is now on Ringlerr";
-                                        setAlarm(notiMgs, "Ringlerr Reminder");
+                                        setAlarm(notiMgs, "Ringlerr Update");
                                     }
                                 }
                             }

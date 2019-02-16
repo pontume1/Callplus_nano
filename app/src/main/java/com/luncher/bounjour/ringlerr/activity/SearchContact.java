@@ -40,13 +40,13 @@ public class SearchContact extends AppCompatActivity {
 
         setContentView(R.layout.search_contact);
 
-        recyclerView = (RecyclerView) findViewById(R.id.search_recycler_view);
+        recyclerView = findViewById(R.id.search_recycler_view);
         recyclerView.setHasFixedSize(true);
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        search = (EditText) findViewById( R.id.contact_search);
+        search = findViewById( R.id.contact_search);
         search.requestFocus();
 
 
@@ -79,7 +79,7 @@ public class SearchContact extends AppCompatActivity {
 
                 for (int i = 0; i < contacts.size(); i++) {
                     if(contacts.get(i).getPhoneNumbers().size()>0) {
-                        String name = contacts.get(i).getDisplayName().toString();
+                        String name = contacts.get(i).getDisplayName();
                         String num = contacts.get(i).getPhoneNumbers().get(0).getNumber();
                         if (name.toLowerCase().contains(query) || num.toLowerCase().contains(query)) {
                             input.add(name);
@@ -88,7 +88,7 @@ public class SearchContact extends AppCompatActivity {
                             if (contacts.get(i).getPhoneNumbers().get(0).getNormalizedNumber() == null) {
                                 phoneNo.add(contacts.get(i).getPhoneNumbers().get(0).getNumber());
                             } else {
-                                phoneNo.add(contacts.get(i).getPhoneNumbers().get(0).getNormalizedNumber().toString());
+                                phoneNo.add(contacts.get(i).getPhoneNumbers().get(0).getNormalizedNumber());
                             }
                         }
 

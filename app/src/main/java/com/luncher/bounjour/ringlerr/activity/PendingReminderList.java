@@ -1,6 +1,7 @@
 package com.luncher.bounjour.ringlerr.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -19,15 +20,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +34,10 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.luncher.bounjour.ringlerr.MainActivity;
 import com.luncher.bounjour.ringlerr.MyDbHelper;
 import com.luncher.bounjour.ringlerr.R;
 import com.luncher.bounjour.ringlerr.SessionManager;
 import com.luncher.bounjour.ringlerr.model.Reminder;
-import com.luncher.bounjour.ringlerr.services.MyReminderNotificationReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +47,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
@@ -60,12 +58,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PendingReminderList extends Activity {
 
     private RecyclerView reminder_list;
-    private LinearLayoutManager layoutManager;
-    private Query mReminderDatabase;
     private FirebaseRecyclerAdapter<Reminder, ReminderViewHolder> firebaseRecyclerAdapter;
     private DatabaseReference mRootRef;
     private String mPhoneNo;
-    private String filterHeader = "Upcoming";
     private String filterHeaderStat = "All";
     private String search_text = "";
     private EditText contact_search;
@@ -73,7 +68,6 @@ public class PendingReminderList extends Activity {
 
     AlarmManager alarmManager;
     private PendingIntent pendingIntent;
-    private PendingIntent pendingNotiIntent;
     // Session Manager Class
     SessionManager session;
 
@@ -85,8 +79,8 @@ public class PendingReminderList extends Activity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        contact_search = (EditText) findViewById(R.id.contact_search);
-        no_data = (TextView) findViewById(R.id.no_data);
+        contact_search = findViewById(R.id.contact_search);
+        no_data = findViewById(R.id.no_data);
 
         no_data.setVisibility(View.GONE);
         contact_search.addTextChangedListener(new TextWatcher() {
@@ -110,15 +104,15 @@ public class PendingReminderList extends Activity {
         // phone
         mPhoneNo = user.get(SessionManager.KEY_PHONE);
 
-        reminder_list = (RecyclerView) findViewById(R.id.pending_reminder_list);
+        reminder_list = findViewById(R.id.pending_reminder_list);
         reminder_list.setHasFixedSize(true);
         // use a linear layout manager
-        layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         layoutManager.setStackFromEnd(false);
         layoutManager.setReverseLayout(false);
         reminder_list.setLayoutManager(layoutManager);
 
-        mReminderDatabase = FirebaseDatabase.getInstance().getReference().child("reminder").child(mPhoneNo).orderByChild("time");
+        Query mReminderDatabase = FirebaseDatabase.getInstance().getReference().child("reminder").child(mPhoneNo).orderByChild("time");
         mReminderDatabase.keepSynced(true);
 
         FirebaseRecyclerOptions<Reminder> options =
@@ -138,7 +132,10 @@ public class PendingReminderList extends Activity {
                 String Is_accepted = reminder.getIs_accepted();
                 String reminderKey = firebaseRecyclerAdapter.getRef(position).getKey();
                 String statusIcon = "pending";
-                Long dateTime = Long.valueOf(reminder.getReminderTime())*1000;
+                Long dateTime = timestamp;
+                if(null != reminder.getReminderTime()) {
+                    dateTime = Long.valueOf(reminder.getReminderTime()) * 1000;
+                }
 
                 Calendar now = Calendar.getInstance();
                 Calendar postTime = Calendar.getInstance();
@@ -155,11 +152,11 @@ public class PendingReminderList extends Activity {
                 }
 
                 Date date = new Date(timestamp);
-                SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyy HH:mm:ss");
+                SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyy HH:mm:ss", Locale.US);
                 String formattedDate = formatter.format(date);
 
                 Date date_time = new Date(dateTime);
-                SimpleDateFormat date_time_formatter = new SimpleDateFormat("d MMM, HH:mm");
+                SimpleDateFormat date_time_formatter = new SimpleDateFormat("d MMM, HH:mm", Locale.US);
                 String formattedDateTime = date_time_formatter.format(date_time);
                 Boolean showAcceptBtn = false;
 
@@ -209,14 +206,14 @@ public class PendingReminderList extends Activity {
 
                         }
 
-                    } catch (Throwable t) {
+                    } catch (Throwable ignored) {
 
                     }
                     share_text = getResources().getString(R.string.share_with)+" "+my_shared_text;
                     statusIcon = "hide";
                 }
 
-                reminderViewHolder.setDisplayMessage(reminder.getMessage(), formattedDate, share_text, timestamp, showAcceptBtn, from, to, reminderKey, statusIcon, header, shared_with);
+                reminderViewHolder.setDisplayMessage(reminder.getMessage(), formattedDate, share_text, timestamp, showAcceptBtn, from, reminderKey, statusIcon, header, shared_with, reminder.getRemindAgo());
 
             }
 
@@ -268,8 +265,8 @@ public class PendingReminderList extends Activity {
 
     public class ReminderViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView messageView;
-        public TextView date_timeView;
+        TextView messageView;
+        TextView date_timeView;
         public TextView sharedView;
         public LinearLayout rej_acc_layout;
         public Button button_missed;
@@ -281,33 +278,34 @@ public class PendingReminderList extends Activity {
         private LinearLayout left_r_layout;
         private TextView buttonViewOption;
 
-        public ReminderViewHolder(View itemView) {
+        ReminderViewHolder(View itemView) {
             super(itemView);
 
-            messageView = (TextView) itemView.findViewById(R.id.message_rem_list);
-            date_timeView = (TextView) itemView.findViewById(R.id.date_time);
-            sharedView = (TextView) itemView.findViewById(R.id.shared);
-            rej_acc_layout = (LinearLayout) itemView.findViewById(R.id.rej_acc_layout);
-            button_missed = (Button) itemView.findViewById(R.id.button_missed);
-            main_layout = (RelativeLayout) itemView.findViewById(R.id.main_layout);
-            left_r_layout = (LinearLayout) itemView.findViewById(R.id.left_r_layout);
-            button_acc = (Button) itemView.findViewById(R.id.button_acc);
-            button_rej = (Button) itemView.findViewById(R.id.button_rej);
-            status_icon = (ImageView) itemView.findViewById(R.id.status_icon);
-            buttonViewOption = (TextView) itemView.findViewById(R.id.textViewOptions);
+            messageView = itemView.findViewById(R.id.message_rem_list);
+            date_timeView = itemView.findViewById(R.id.date_time);
+            sharedView = itemView.findViewById(R.id.shared);
+            rej_acc_layout = itemView.findViewById(R.id.rej_acc_layout);
+            button_missed = itemView.findViewById(R.id.button_missed);
+            main_layout = itemView.findViewById(R.id.main_layout);
+            left_r_layout = itemView.findViewById(R.id.left_r_layout);
+            button_acc = itemView.findViewById(R.id.button_acc);
+            button_rej = itemView.findViewById(R.id.button_rej);
+            status_icon = itemView.findViewById(R.id.status_icon);
+            buttonViewOption = itemView.findViewById(R.id.textViewOptions);
 
         }
 
         public void setDisplayMessage(final String message, final String formattedDate, final String share_text,
                                       final Long timestamp, Boolean showAcceptBtn, final String from,
-                                      final String to, final String reminderKey, String statusIcon, String header,
-                                      final String shared_with){
+                                      final String reminderKey, String statusIcon, String header,
+                                      final String shared_with, final Integer remindAgo){
 
             messageView.setText(message);
             date_timeView.setText(formattedDate);
             sharedView.setText(share_text);
             Long tsLong = System.currentTimeMillis();
 
+            String filterHeader = "Upcoming";
             if(header.equals(filterHeader)){
                 if(search_text.equals("")){
                     main_layout.setVisibility(View.VISIBLE);
@@ -375,6 +373,8 @@ public class PendingReminderList extends Activity {
                       detail_intent.putExtra("formattedDate", formattedDate);
                       detail_intent.putExtra("timestamp", timestamp);
                       detail_intent.putExtra("shared_with", shared_with);
+                      detail_intent.putExtra("reminderkey", reminderKey);
+                      detail_intent.putExtra("backpress", 0);
                       //context.startActivity(intent1);
                       new Handler().postDelayed(new Runnable() {
                           @Override
@@ -394,16 +394,25 @@ public class PendingReminderList extends Activity {
                     //alarm_del.setVisibility(View.VISIBLE);
                     status_icon.setVisibility(View.VISIBLE);
 
-                    MyDbHelper myDbHelper = new MyDbHelper(PendingReminderList.this, null, null, 1);
-                    long Id = myDbHelper.addReminder(message, timestamp, shared_with.toString(), reminderKey);
+                    MyDbHelper myDbHelper = new MyDbHelper(PendingReminderList.this, null, 9);
+                    long Id = myDbHelper.updateReminderAccRej(reminderKey, message, timestamp, shared_with, remindAgo, "1");
+
+                    Long noti_time;
+                    if (remindAgo == 1) {
+                        noti_time = timestamp - (60 * 60 * 1000);
+                    }else {
+                        noti_time = timestamp - (remindAgo * 60 * 1000);
+                    }
 
                     alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                     Intent myIntent = new Intent(PendingReminderList.this, ReminderAlarmDialog.class);
+                    myIntent.putExtra("from", from);
                     myIntent.putExtra("alarm_mgs", message);
                     myIntent.putExtra("date_time", timestamp);
-                    //myIntent.putExtra("alarm_mgs", message);
+                    myIntent.putExtra("alarm_id", Id);
+                    myIntent.putExtra("shared_with", shared_with);
                     pendingIntent = PendingIntent.getActivity(PendingReminderList.this, (int) Id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, timestamp, pendingIntent);
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, noti_time, pendingIntent);
 
 //                    Intent notifyIntent = new Intent(PendingReminderList.this, MyReminderNotificationReceiver.class);
 //                    notifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -457,6 +466,9 @@ public class PendingReminderList extends Activity {
                     rej_acc_layout.setVisibility(View.GONE);
                     //alarm_del.setVisibility(View.VISIBLE);
                     status_icon.setVisibility(View.VISIBLE);
+
+                    MyDbHelper myDbHelper = new MyDbHelper(PendingReminderList.this, null, 9);
+                    long Id = myDbHelper.updateReminderAccRej(reminderKey, message, timestamp, shared_with, remindAgo, "2");
 
                     try {
 
@@ -532,7 +544,7 @@ public class PendingReminderList extends Activity {
 
                                             }
 
-                                        } catch (Throwable t) {
+                                        } catch (Throwable ignored) {
 
                                         }
 
@@ -597,10 +609,27 @@ public class PendingReminderList extends Activity {
 
     }
 
+    public boolean isRunning(Context ctx) {
+        ActivityManager activityManager =
+                (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+
+        List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
+
+        for (ActivityManager.RunningTaskInfo task : tasks) {
+            if (ctx.getPackageName().equalsIgnoreCase(task.baseActivity.getPackageName()))
+                return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void onBackPressed() {
-        Intent mainintent = new Intent(this, MainActivity.class);
-        startActivity(mainintent);
+        super.onBackPressed();
+        if(!isRunning(PendingReminderList.this)) {
+            Intent mainintent = new Intent(this, ReminderList.class);
+            startActivity(mainintent);
+        }
     }
 
     public void onAddEventClicked(String message, String share_text, Long timestamp) {

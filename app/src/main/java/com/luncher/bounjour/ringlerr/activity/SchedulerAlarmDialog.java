@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -32,6 +33,7 @@ public class SchedulerAlarmDialog extends Activity {
 
     String alarm_message;
     String phone;
+    String name;
     String spinner_type;
     Ringtone ringtone;
 
@@ -58,19 +60,21 @@ public class SchedulerAlarmDialog extends Activity {
 
         setContentView(R.layout.scheduler_alarm);
 
-        Button closeBtn = (Button) findViewById(R.id.dialog_close);
-        Button send_btn = (Button) findViewById(R.id.send_btn);
-        TextView message = (TextView) findViewById(R.id.message);
-        TextView text_date = (TextView) findViewById(R.id.text_date);
-        TextView text_repeat = (TextView) findViewById(R.id.text_repeat);
+        Button closeBtn = findViewById(R.id.dialog_close);
+        Button send_btn = findViewById(R.id.send_btn);
+        TextView message = findViewById(R.id.message);
+        TextView text_date = findViewById(R.id.text_date);
+        TextView text_repeat = findViewById(R.id.text_repeat);
 
         alarm_message = getIntent().getExtras().getString("alarm_mgs");
         phone = getIntent().getExtras().getString("phone");
+        name = getIntent().getExtras().getString("name");
         Long date_time = getIntent().getExtras().getLong("date_time", 0);
         String is_manual = getIntent().getExtras().getString("is_manual");
         spinner_type = getIntent().getExtras().getString("spinner_type");
 
-        text_repeat.setText("Send via "+spinner_type);
+        String share_text = "Send via "+spinner_type+" to "+name;
+        text_repeat.setText(share_text);
 
         String formattedDate = "";
 
@@ -93,7 +97,7 @@ public class SchedulerAlarmDialog extends Activity {
             } else {
                 SmsManager sms = SmsManager.getDefault();
                 sms.sendTextMessage(phone, null, alarm_message, null, null);
-                setNotification("Schedule sms sent to "+phone+" via Ringlerr scheduler");
+                setNotification("Schedule sms sent to "+name+" via Ringlerr scheduler");
                 finish();
             }
         }else{
@@ -196,14 +200,14 @@ public class SchedulerAlarmDialog extends Activity {
 
     public void setNotification(String notiMgs){
         //set alarmn
-        NotificationManager notificationManager = (NotificationManager) getSystemService(SchedulerAlarmDialog.this.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         String NOTIFICATION_CHANNEL_ID = "my_channel_id_03";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Ringlerr Reminder", NotificationManager.IMPORTANCE_DEFAULT);
 
             // Configure the notification channel.
-            notificationChannel.setDescription("Channel description");
+            notificationChannel.setDescription("Ringlerr Notification");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});

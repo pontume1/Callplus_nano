@@ -176,6 +176,8 @@ public class MySettings extends AppCompatActivity {
 
                         mProgressDialog.dismiss();
 
+                        Toast.makeText(MySettings.this, "Profile updated!", Toast.LENGTH_SHORT).show();
+
 //                        Intent mainintent = new Intent(Setting.this, MainActivity.class);
 //                        mainintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //                        startActivity(mainintent);
@@ -380,6 +382,7 @@ public class MySettings extends AppCompatActivity {
                                     .apply(requestOptions)
                                     .into(picture);
                             mProgressDialog.dismiss();
+                            Toast.makeText(MySettings.this, "Picture updated!", Toast.LENGTH_SHORT).show();
                             download_image(filepath);
                         }
                     }
@@ -439,6 +442,7 @@ public class MySettings extends AppCompatActivity {
                                 .apply(requestOptions)
                                 .into(picture);
                         mProgressDialog.dismiss();
+                        Toast.makeText(MySettings.this, "Picture updated!", Toast.LENGTH_SHORT).show();
                         download_image(filepath);
                     }
                 }

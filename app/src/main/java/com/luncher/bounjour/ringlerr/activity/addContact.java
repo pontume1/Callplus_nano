@@ -4,6 +4,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -15,7 +16,10 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.luncher.bounjour.ringlerr.MyDbHelper;
 import com.luncher.bounjour.ringlerr.R;
+
+import java.util.Random;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,11 +27,19 @@ public class addContact extends AppCompatActivity {
 
     private EditText displayNameEditor;
     private EditText phoneNumberEditor;
-    private String phone;
-    private String name;
+    private EditText email;
+    private EditText company;
+    private EditText department;
+    private EditText job;
+    private EditText address;
+    private EditText website;
     private Spinner phoneTypeSpinner;
     private Button savePhoneContactButton;
     private Button cancle_button;
+
+    private String phone;
+    private String name;
+    private Long rowContactId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +47,15 @@ public class addContact extends AppCompatActivity {
         setContentView(R.layout.activity_add_phone_contact);
 
         setTitle("Create Contact");
-        displayNameEditor = (EditText)findViewById(R.id.add_phone_contact_display_name);
-        phoneNumberEditor = (EditText)findViewById(R.id.add_phone_contact_number);
+        displayNameEditor = findViewById(R.id.add_phone_contact_display_name);
+        phoneNumberEditor = findViewById(R.id.add_phone_contact_number);
+        email = findViewById(R.id.add_phone_contact_display_email);
+        company = findViewById(R.id.add_phone_contact_company);
+        department = findViewById(R.id.add_phone_contact_department);
+        job = findViewById(R.id.add_phone_contact_job);
+        address = findViewById(R.id.add_phone_contact_address);
+        website = findViewById(R.id.add_phone_contact_website);
+
         phone = getIntent().getExtras().getString("phone");
         name = getIntent().getExtras().getString("name");
         phoneNumberEditor.setText(phone);
@@ -45,14 +64,14 @@ public class addContact extends AppCompatActivity {
         }
 
         // Initialize phone type dropdown spinner.
-        phoneTypeSpinner = (Spinner)findViewById(R.id.add_phone_contact_type);
+        phoneTypeSpinner = findViewById(R.id.add_phone_contact_type);
         String phoneTypeArr[] = {"Mobile", "Home", "Work"};
         ArrayAdapter<String> phoneTypeSpinnerAdaptor = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, phoneTypeArr);
         phoneTypeSpinner.setAdapter(phoneTypeSpinnerAdaptor);
 
         // Click this button to save user input phone contact info.
-        savePhoneContactButton = (Button)findViewById(R.id.add_phone_contact_save_button);
-        cancle_button = (Button)findViewById(R.id.cancle_button);
+        savePhoneContactButton = findViewById(R.id.add_phone_contact_save_button);
+        cancle_button = findViewById(R.id.cancle_button);
         savePhoneContactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +82,7 @@ public class addContact extends AppCompatActivity {
                 Uri addContactsUri = ContactsContract.Data.CONTENT_URI;
 
                 // Add an empty contact and get the generated id.
-                long rowContactId = getRawContactId();
+                rowContactId = getRawContactId();
 
                 // Add contact name data.
                 String displayName = displayNameEditor.getText().toString();
@@ -106,6 +125,22 @@ public class addContact extends AppCompatActivity {
         return ret;
     }
 
+    public int getContactIDFromNumber(String contactNumber)
+    {
+        int phoneContactID = new Random().nextInt();
+        if(contactNumber == null || contactNumber.equals("")){
+            phoneContactID = -1;
+        }else {
+            contactNumber = Uri.encode(contactNumber);
+            Cursor contactLookupCursor = getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, contactNumber), new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID}, null, null, null);
+            while (contactLookupCursor.moveToNext()) {
+                phoneContactID = contactLookupCursor.getInt(contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID));
+            }
+            contactLookupCursor.close();
+        }
+
+        return phoneContactID;
+    }
 
     // Insert newly created contact display name.
     private void insertContactDisplayName(Uri addContactsUri, long rawContactId, String displayName)
@@ -157,13 +192,19 @@ public class addContact extends AppCompatActivity {
         // Insert new contact data into phone contact list.
         getContentResolver().insert(addContactsUri, contentValues);
 
+        int ContactId = getContactIDFromNumber(phoneNumber);
+
+        String email_id = email.getText().toString();
+        String company_name = company.getText().toString();
+        String department_name = department.getText().toString();
+        String jobs = job.getText().toString();
+        String my_address = address.getText().toString();
+        String web = website.getText().toString();
+
+        MyDbHelper myDbHelper = new MyDbHelper(addContact.this, null, 9);
+        myDbHelper.addContact(ContactId, phoneNumber, name, phoneTypeStr, email_id, company_name, department_name, jobs, my_address, web);
+
     }
 
-    // ListPhoneContactsActivity use this method to start this activity.
-    public static void start(Context context)
-    {
-        Intent intent = new Intent(context, addContact.class);
-        context.startActivity(intent);
-    }
 }
 

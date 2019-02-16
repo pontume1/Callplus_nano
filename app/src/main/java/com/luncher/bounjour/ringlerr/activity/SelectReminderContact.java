@@ -142,6 +142,14 @@ public class SelectReminderContact extends Activity implements RecyclerViewClick
                 if(sel_contacts.size() == 0) {
                     finish();
                 }else{
+
+                    if(ReminderSelfDialog.rsd != null){
+                        ReminderSelfDialog.rsd .finish();
+                    }
+                    if(ReminderDialog.rd != null){
+                        ReminderDialog.rd.finish();
+                    }
+
                     final Intent intent1 = new Intent(SelectReminderContact.this, ReminderDialogGroup.class);
                     intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

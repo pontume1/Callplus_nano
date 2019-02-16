@@ -47,9 +47,9 @@ public class SchedulerList extends Activity {
 
         setContentView(R.layout.scheduler_list);
 
-        contact_search = (EditText) findViewById(R.id.contact_search);
-        add_scheduler = (ImageView) findViewById(R.id.add_scheduler);
-        no_data = (TextView) findViewById(R.id.no_data);
+        contact_search = findViewById(R.id.contact_search);
+        add_scheduler = findViewById(R.id.add_scheduler);
+        no_data = findViewById(R.id.no_data);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
@@ -76,7 +76,7 @@ public class SchedulerList extends Activity {
 
 
         //initialise recyclerview
-        recyclerView = (RecyclerView) findViewById(R.id.scheduler_recycle_view);
+        recyclerView = findViewById(R.id.scheduler_recycle_view);
         //initialise adapter class
         mAdapter = new SchedulerAdapter(this, scheduleList);
 
@@ -91,7 +91,7 @@ public class SchedulerList extends Activity {
     }
 
     private void prepareData() {
-        MyDbHelper myDbHelper = new MyDbHelper(SchedulerList.this, null, null, 1);
+        MyDbHelper myDbHelper = new MyDbHelper(SchedulerList.this, null, 1);
         List<Scheduler> sec = myDbHelper.getAllScheduler();
         scheduleList.clear();
 
@@ -111,7 +111,6 @@ public class SchedulerList extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override

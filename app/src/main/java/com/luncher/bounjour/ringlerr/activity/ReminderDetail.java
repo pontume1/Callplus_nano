@@ -12,9 +12,12 @@ import android.provider.ContactsContract;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.luncher.bounjour.ringlerr.R;
 import com.luncher.bounjour.ringlerr.SessionManager;
 import com.luncher.bounjour.ringlerr.adapter.ListAdapter;
@@ -36,6 +39,7 @@ public class ReminderDetail extends Activity {
     public TextView date_timeView;
     public ListView list;
     public ListAdapter adapter;
+    private Integer backpress;
 
     SessionManager session;
     public ArrayList<ReminderDetails> remDetails = new ArrayList<ReminderDetails>();
@@ -53,14 +57,16 @@ public class ReminderDetail extends Activity {
         // phone
         mPhoneNo = user.get(SessionManager.KEY_PHONE);
 
-        messageView = (TextView) findViewById(R.id.message_rem_list);
-        date_timeView = (TextView) findViewById(R.id.date_time);
-        list = (ListView) findViewById(R.id.list);
+        messageView = findViewById(R.id.message_rem_list);
+        date_timeView = findViewById(R.id.date_time);
+        list = findViewById(R.id.list);
 
         String message = getIntent().getExtras().getString("message");
         String time = getIntent().getExtras().getString("formattedDate");
         String share_with = getIntent().getExtras().getString("shared_with");
         Long timestamp = getIntent().getLongExtra("timestamp", 0);
+        String reminderKey = getIntent().getExtras().getString("reminderkey");
+        backpress = getIntent().getIntExtra("backpress", 0);
 
         adapter = new ListAdapter(this, timestamp);
         list.setAdapter(adapter);
@@ -96,11 +102,64 @@ public class ReminderDetail extends Activity {
         messageView.setText(message);
         date_timeView.setText(time);
 
-        mRootRef = FirebaseDatabase.getInstance().getReference();
+        if(!reminderKey.equals("null")) {
+            mRootRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference myValue = mRootRef.child("reminder").child(mPhoneNo).child(reminderKey).child("shared_with");
+            myValue.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String shared_with_me = dataSnapshot.getValue(String.class);
+                    remDetails.clear();
 
-        mReminderDatabase = FirebaseDatabase.getInstance().getReference().child("reminder").child(mPhoneNo).orderByChild("time");
-        mReminderDatabase.keepSynced(true);
+                    if (null != shared_with_me){
+                        try {
+                            JSONObject sharelist = new JSONObject(shared_with_me);
+                            JSONArray keys = sharelist.names();
 
+                            for (int i = 0; i < keys.length(); ++i) {
+
+                                String ph_key = keys.getString(i); // Here's your key
+                                String co_key = sharelist.getString(ph_key); // Here's your value
+                                String ph_name;
+
+                                if (mPhoneNo.equals(ph_key)) {
+                                    ph_name = "You";
+                                } else {
+                                    ph_name = getContactName(ReminderDetail.this, ph_key);
+                                }
+
+                                ReminderDetails reminderDetails = new ReminderDetails();
+                                reminderDetails.name = ph_name;
+                                reminderDetails.code = co_key;
+
+                                remDetails.add(reminderDetails);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(backpress == 1) {
+            Intent mainintent = new Intent(this, ReminderList.class);
+            mainintent.putExtra("activity","goHome");
+            startActivity(mainintent);
+        }else{
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -112,26 +171,6 @@ public class ReminderDetail extends Activity {
     protected void onStop() {
         super.onStop();
     }
-
-    public void onAddEventClicked(String message, String share_text, Long timestamp) {
-        Intent intent = new Intent(Intent.ACTION_INSERT);
-        intent.setType("vnd.android.cursor.item/event");
-
-        long startTime = timestamp;
-        long endTime = timestamp + 60;
-
-        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
-        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime);
-        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
-
-        intent.putExtra(CalendarContract.Events.TITLE, share_text);
-        intent.putExtra(CalendarContract.Events.DESCRIPTION, message);
-        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, "");
-        intent.putExtra(CalendarContract.Events.RRULE, "FREQ=YEARLY");
-
-        startActivity(intent);
-    }
-
 
 
     public static String getContactName(Context context, String phoneNumber) {

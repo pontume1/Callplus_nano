@@ -1,9 +1,5 @@
 package com.luncher.bounjour.ringlerr;
 
-/**
- * Created by santanu on 11/11/17.
- */
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -13,6 +9,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Movie;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +30,7 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,11 +40,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.github.nkzawa.emitter.Emitter;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,12 +56,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Objects;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,7 +70,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.luncher.bounjour.ringlerr.activity.EnregistrementVideoStackActivity;
 import com.luncher.bounjour.ringlerr.activity.FullScreenHolder;
+import com.luncher.bounjour.ringlerr.activity.FullScreenVideoHolder;
+import com.luncher.bounjour.ringlerr.activity.SnapActivity;
 import com.luncher.bounjour.ringlerr.model.Identity;
 import com.luncher.bounjour.ringlerr.model.Message;
 import com.soundcloud.android.crop.Crop;
@@ -79,6 +82,9 @@ import com.squareup.okhttp.OkHttpClient;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 public class MyOutgoingCustomDialog extends Activity {
     TextView name;
@@ -87,22 +93,25 @@ public class MyOutgoingCustomDialog extends Activity {
     TextView talk_time;
     String phone_no;
     String c_name;
-    Boolean is_ringlerr;
+    Boolean is_ringlerr = true;
     String message;
     String clear_type;
     String userChoosenTask;
     Bitmap imagePath = null;
+    Bitmap snapImagePath = null;
     byte[] gifImage;
     String libImage = "none";
     String themeImage = "none";
     String image = "none";
     String stickerImage = "none";
+    String videoData = "none";
+    String videoPath = "none";
     String talkTime = "";
     EditText sendMgs;
     ImageButton dialog_ok;
     LinearLayout img;
-    MyDbHelper myDbHelper;
     int sim;
+    public static Activity mcd;
 
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1, PICK_ICON_REQUEST = 2, PICK_THEME_REQUEST = 3, FINAL_EDIT_IMG = 4, PICK_STICKER_REQUEST = 5;
     private ImageButton btnSelect;
@@ -113,14 +122,17 @@ public class MyOutgoingCustomDialog extends Activity {
     private ImageView profile_image;
     private ImageView clear_image;
     private ImageView imageView5;
+    private VideoView videoView;
+    private LinearLayout videoLayout;
 
     private static final int PERMISSION_REQUEST_OUTGOING_CALLS = 12;
     private static final int PERMISSION_REQUEST_CALL_PHONE = 124;
-    public static final int REQUEST_CODE = 15;
+    private static final int PICK_SNAP_REQUEST = 6;
+    private static final int PICK_VIDEO_REQUEST = 8;
+    private static final int FINAL_EDIT_SNAP = 788;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 7;
 
-    private FirebaseAuth mAuth;
     private DatabaseReference mRootRef;
-    private String mCurrentUserId;
     private String mPhoneNo;
     private String mName;
 
@@ -144,15 +156,25 @@ public class MyOutgoingCustomDialog extends Activity {
     };
 
     private final OkHttpClient client = new OkHttpClient();
+    private Uri mImageUri;
+
+    String[] languages = { "Need to talk, something urgent.",
+                            "There is an emergency at home, Please respond.",
+                            "I want to speak to you regrading.",
+                            "Stuck somewhere, need your help.",
+                            "I want to speak to you for a minute." };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mcd = this;
+        //android O fix bug orientation
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
-
         SessionManager session = new SessionManager(MyOutgoingCustomDialog.this);
-        // get user data from session
+
         HashMap<String, String> user = session.getUserDetails();
         // phone
         mPhoneNo = user.get(SessionManager.KEY_PHONE);
@@ -160,50 +182,45 @@ public class MyOutgoingCustomDialog extends Activity {
 
         try {
             requestWindowFeature(Window.FEATURE_NO_TITLE);
-            this.setFinishOnTouchOutside(false);
             super.onCreate(savedInstanceState);
             setContentView(R.layout.dialog_outgoing);
             initializeContent();
+
             this.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
             this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            //this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             this.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-
-            //this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
             this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+            // Make us non-modal, so that others can receive touch events.
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
+            // ...but notify us that it happened.
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
             this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-            //this.getWindow().addFlags(PixelFormat.TRANSPARENT);
 
-            /*WindowManager.LayoutParams params = getWindow().getAttributes();
-            params.x = -100;
-            params.height = 70;
-            params.width = 1000;
-            params.y = -50;
-
-            this.getWindow().setAttributes(params);*/
-
-            Log.d("test","outgoing custom dialog");
-
-            phone_no = getIntent().getExtras().getString("phone_no");
+            phone_no = Objects.requireNonNull(getIntent().getExtras()).getString("phone_no");
             c_name = getIntent().getExtras().getString("name");
+            message = getIntent().getExtras().getString("message");
 
             phone_no = "+91"+getLastnCharacters(phone_no,10);
             //sim = getIntent().getExtras().getInt("sim");
             sim = 0;
 
-            btnSelect = (ImageButton) findViewById(R.id.btnSelectPhoto);
-            btnSelectGif = (ImageButton) findViewById(R.id.btnSelectGif);
+            btnSelect = findViewById(R.id.btnSelectPhoto);
+            btnSelectGif = findViewById(R.id.btnSelectGif);
             //btnSelectheme = (ImageButton) findViewById(R.id.btnSelectheme);
-            btnSelectStickers = (ImageButton) findViewById(R.id.btnSelectStickers);
-            ivImage = (ImageView) findViewById(R.id.ivImage);
-            profile_image = (ImageView) findViewById(R.id.profile_image);
-            clear_image = (ImageView) findViewById(R.id.clear_image);
-            imageView5 = (ImageView) findViewById(R.id.imageView5);
-            name = (TextView) findViewById(R.id.name);
-            phone = (TextView) findViewById(R.id.phone);
-            talk_time = (TextView) findViewById(R.id.talk_time);
-            img = (LinearLayout) findViewById(R.id.img);
-            ImageButton closeButton = (ImageButton) findViewById(R.id.close_btn);
+            btnSelectStickers = findViewById(R.id.btnSelectStickers);
+            ivImage = findViewById(R.id.ivImage);
+            videoView = findViewById(R.id.videoView);
+            videoLayout = findViewById(R.id.videoLayout);
+            profile_image = findViewById(R.id.profile_image);
+            clear_image = findViewById(R.id.clear_image);
+            imageView5 = findViewById(R.id.imageView5);
+            ImageView choices_sel = findViewById(R.id.choices_sel);
+            name = findViewById(R.id.name);
+            phone = findViewById(R.id.phone);
+            talk_time = findViewById(R.id.talk_time);
+            img = findViewById(R.id.img);
+            ImageButton closeButton = findViewById(R.id.send_flash);
 
             if(phone_no.equals(c_name)){
                 name.setText("");
@@ -212,10 +229,9 @@ public class MyOutgoingCustomDialog extends Activity {
             }
             phone.setText(c_name);
 
-//            Bitmap profile_bitmap = (Bitmap) getIntent().getParcelableExtra("BitmapImage");
-//            if(profile_bitmap != null){
-//                profile_image.setImageBitmap(profile_bitmap);
-//            }
+            if(null != message){
+                sendMgs.setText(message);
+            }
 
             String img_type = getIntent().getExtras().getString("type");
             if(img_type != null) {
@@ -271,11 +287,164 @@ public class MyOutgoingCustomDialog extends Activity {
                 }
             });
 
+            choices_sel.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //creating a popup menu
+                    final PopupMenu popup = new PopupMenu(MyOutgoingCustomDialog.this, sendMgs);
+
+                    final MyDbHelper myDbHelper = new MyDbHelper(MyOutgoingCustomDialog.this, null, 11);
+                    final List<String> sec = myDbHelper.allCustomMessages();
+                    if(sec.size() < 5) {
+                        popup.getMenu().add("Add Custom");
+                    }else{
+                        popup.getMenu().add("Edit Custom");
+                    }
+
+                    if (sec.size() > 0) {
+                        //loop through contents
+                        for (int i = 0; i < sec.size(); i++) {
+                            popup.getMenu().add(sec.get(i));
+                        }
+                    }
+
+                    for (String s: languages) {
+                        //Do your stuff here
+                        popup.getMenu().add(s);
+                    }
+                    //adding click listener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            if (item.getTitle().equals("Add Custom")) {
+                                AlertDialog.Builder alert = new AlertDialog.Builder(MyOutgoingCustomDialog.this);
+                                final EditText edittext = new EditText(MyOutgoingCustomDialog.this);
+                                alert.setMessage("Add Custom Message");
+                                alert.setTitle("");
+
+                                alert.setView(edittext);
+
+                                alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        String value = edittext.getText().toString();
+                                        sendMgs.setText(value);
+                                        MyDbHelper myDbHelper = new MyDbHelper(MyOutgoingCustomDialog.this, null, 11);
+                                        myDbHelper.addCustomMessage(value);
+
+                                    }
+                                });
+
+                                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        // what ever you want to do with No option.
+                                    }
+                                });
+
+                                alert.show();
+                            } else if(item.getTitle().equals("Edit Custom")){
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MyOutgoingCustomDialog.this);
+
+                                // String array for alert dialog multi choice items
+                                String[] colors = new String[sec.size()];
+
+                                // Boolean array for initial selected items
+                                final boolean[] checkedColors = new boolean[sec.size()];
+
+                                if (sec.size() > 0) {
+                                    //loop through contents
+                                    for (int i = 0; i < sec.size(); i++) {
+                                        colors[i] = sec.get(i);
+                                        checkedColors[i] = false;
+                                    }
+                                }
+
+                                // Convert the color array to list
+                                final List<String> colorsList = Arrays.asList(colors);
+
+                                // Set multiple choice items for alert dialog
+                                /*
+                                    AlertDialog.Builder setMultiChoiceItems(CharSequence[] items, boolean[]
+                                    checkedItems, DialogInterface.OnMultiChoiceClickListener listener)
+                                        Set a list of items to be displayed in the dialog as the content,
+                                        you will be notified of the selected item via the supplied listener.
+                                 */
+                                /*
+                                    DialogInterface.OnMultiChoiceClickListener
+                                    public abstract void onClick (DialogInterface dialog, int which, boolean isChecked)
+
+                                        This method will be invoked when an item in the dialog is clicked.
+
+                                        Parameters
+                                        dialog The dialog where the selection was made.
+                                        which The position of the item in the list that was clicked.
+                                        isChecked True if the click checked the item, else false.
+                                 */
+                                builder.setMultiChoiceItems(colors, checkedColors, new DialogInterface.OnMultiChoiceClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
+                                        // Update the current focused item's checked status
+                                        checkedColors[which] = isChecked;
+
+                                        // Get the current focused item
+                                        String currentItem = colorsList.get(which);
+                                    }
+                                });
+
+                                // Specify the dialog is not cancelable
+                                builder.setCancelable(false);
+
+                                // Set a title for alert dialog
+                                builder.setTitle("Delete custom messages");
+
+                                // Set the positive/yes button click listener
+                                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Do something when click positive button
+                                        for (int i = 0; i<checkedColors.length; i++){
+                                            boolean checked = checkedColors[i];
+                                            if (checked) {
+                                                String del_mgs = colorsList.get(i);
+                                                myDbHelper.delMessagebyString(del_mgs);
+                                            }
+                                        }
+
+                                        popup.dismiss();
+                                    }
+                                });
+
+                                // Set the negative/no button click listener
+                                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Do something when click the negative button
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                AlertDialog dialog = builder.create();
+                                // Display the alert dialog on interface
+                                dialog.show();
+
+                            }else{
+                                    sendMgs.setText(item.getTitle());
+                            }
+                            return false;
+                        }
+                    });
+                    //displaying the popup
+                    popup.show();
+                }
+            });
+
             btnSelect.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    CharSequence[] items = { "Take Photo", "Choose from Gallery","Cancel" };
+                    CharSequence[] items = { "Send Callfie","Send Snap !","Send Video","Choose from Gallery", };
                     selectImage(items);
                     //@color/fui_transparent
                     btnSelect.setBackgroundColor(Color.parseColor("#EEEEEE"));
@@ -289,21 +458,34 @@ public class MyOutgoingCustomDialog extends Activity {
                 @Override
                 public void onClick(View v) {
 
-                    if (clear_type.equals("img")) {
+                    if (null!=clear_type && clear_type.equals("img")) {
 
                         imagePath = null;
+                        snapImagePath = null;
+                        stickerImage = "none";
                         libImage = "none";
                         themeImage = "none";
                         ivImage.setImageDrawable(null);
                     }
 
-                    if (clear_type.equals("gif")) {
+                    if (null!=clear_type && clear_type.equals("gif")) {
                         gifImage = null;
 
 //                        gifView.stopAnimation();
 //                        gifView.setBytes(null);
 //                        gifView.setVisibility(View.GONE);
                     }
+
+                    if(null!=clear_type && clear_type.equals("vid")){
+                        videoLayout.setVisibility(View.GONE);
+                        videoView.stopPlayback();
+                        videoView.clearAnimation();
+                        videoView.suspend(); // clears media player
+                        videoView.setVideoURI(null);
+                        videoView.setVisibility(View.GONE);
+                        videoData = "none";
+                    }
+
                     clear_image.setVisibility(View.GONE);
                     img.setVisibility(View.GONE);
                 }
@@ -344,6 +526,47 @@ public class MyOutgoingCustomDialog extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    message = sendMgs.getText().toString();
+                    //tv_client.setText(message);
+                    String type = "none";
+                    if (imagePath != null) {
+                        image = encodeImage(imagePath);
+                        type = "jpg";
+                    } else if (snapImagePath != null) {
+                        image = encodeImage(snapImagePath);
+                        type = "snap";
+                    } else if (gifImage != null && gifImage.length > 0) {
+                        image = encodeGifImage(gifImage);
+                        type = "gif";
+                    } else if (!libImage.equals("none")) {
+                        image = libImage;
+                        type = "libgif";
+                    } else if (!themeImage.equals("none")) {
+                        image = themeImage;
+                        type = "themgif";
+                    } else if (!stickerImage.equals("none")) {
+                        image = stickerImage;
+                        type = "sticker";
+                    } else if (!videoData.equals("none")) {
+                        image = videoData;
+                        type = "vid";
+                    } else {
+                        image = "none";
+                    }
+
+                    if(!type.equals("none")){
+                        Toast.makeText(MyOutgoingCustomDialog.this, "You can only send text in flash message", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if(message.equals("")){
+                        Toast.makeText(MyOutgoingCustomDialog.this, "Message can't be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Utility.sendMessage(MyOutgoingCustomDialog.this, mPhoneNo, phone_no, image, message, talkTime, "flash", videoPath);
+                    Toast.makeText(MyOutgoingCustomDialog.this, "Flash sent", Toast.LENGTH_SHORT).show();
+
                     finish();
                 }
 
@@ -383,7 +606,10 @@ public class MyOutgoingCustomDialog extends Activity {
                     if (imagePath != null) {
                         image = encodeImage(imagePath);
                         type = "jpg";
-                    } else if (gifImage != null && gifImage.length > 0) {
+                    } else if(snapImagePath != null){
+                        image = encodeImage(snapImagePath);
+                        type = "snap";
+                    }else if (gifImage != null && gifImage.length > 0) {
                         image = encodeGifImage(gifImage);
                         type = "gif";
                     } else if (!libImage.equals("none")) {
@@ -395,53 +621,15 @@ public class MyOutgoingCustomDialog extends Activity {
                     } else if(!stickerImage.equals("none")){
                         image = stickerImage;
                         type = "sticker";
+                    } else if(!videoData.equals("none")){
+                        image = videoData;
+                        type = "vid";
                     }else{
                         image = "none";
                     }
-                    //result = "{'from':'"+mPhoneNo+"','to':'"+phone_no+"', 'message':'"+message+"','image':'"+image+"'}";
 
-//                    JSONObject result = new JSONObject();
-//                    try{
-//                        result.put("from", mPhoneNo);
-//                        result.put("to", phone_no);
-//                        result.put("message", message);
-//                        result.put("image", image);
-//                        result.put("type", type);
-//                    }catch(JSONException e){
-//
-//                    }
+                    Utility.sendMessage(MyOutgoingCustomDialog.this, mPhoneNo, phone_no, image, message, talkTime, type, videoPath);
 
-                    if(!image.equals("none") || !message.isEmpty()){
-//                        mSocket.connect();
-//                        mSocket.emit("message", result);
-//                        DatabaseReference mfrom = mRootRef.child("message").child(mPhoneNo);
-//                        Message messages_frm = new Message(mPhoneNo, phone_no, message, image, type, "false", ""+ServerValue.TIMESTAMP);
-//                        mfrom.setValue(messages_frm);
-
-                        Long tsLong = System.currentTimeMillis()/1000;
-                        String ts = tsLong.toString();
-
-                        if(talkTime.equals("Talk Time")){
-                            talkTime = "";
-                        }
-
-                        DatabaseReference mTo = mRootRef.child("message").child(phone_no);
-                        Message messages_to = new Message(mPhoneNo, phone_no, message, image, type, "false", ts, talkTime);
-                        mTo.setValue(messages_to);
-
-                        String key = mRootRef.child("chats").child(mPhoneNo).child(phone_no).push().getKey();
-                        Message chat = new Message(mPhoneNo, phone_no, message, image, type, "false", ts, talkTime);
-                        Map<String, Object> postValues = chat.toMap();
-
-                        Map<String, Object> childUpdates = new HashMap<>();
-                        childUpdates.put("/chats/" + phone_no + "/" +mPhoneNo+ "/" + key, postValues);
-                        childUpdates.put("/chats/" + mPhoneNo + "/" +phone_no+ "/" + key, postValues);
-
-                        mRootRef.updateChildren(childUpdates);
-
-                    }
-
-                    //this.setFinishOnTouchOutside(false);
                     if(is_ringlerr) {
                         if (type.equals("gif")) {
                             final ProgressDialog progress = new ProgressDialog(MyOutgoingCustomDialog.this);
@@ -472,82 +660,128 @@ public class MyOutgoingCustomDialog extends Activity {
                             pdCanceller.postDelayed(progressRunnable, 15000);
 
                         } else {
-                            //                        PackageManager pm = mContext.getPackageManager();
-                            //                        ComponentName componentName = new ComponentName(mContext, MyOutgoingCallHandler.class);
-                            //                        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                            //setResultData(phone_no);
-                            Intent callIntent = new Intent(Intent.ACTION_CALL);
-                            callIntent.setData(Uri.parse("tel:" + phone_no));
-                            int simSlot = getDefaultSimSlot(MyOutgoingCustomDialog.this);
-                            callIntent.putExtra("com.android.phone.force.slot", true);
-                            callIntent.putExtra("com.android.phone.extra.slot", simSlot);
-                            callIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            startActivity(callIntent);
-                            finish();
 
-                            if(!image.equals("none")){
-                                final Intent intent = new Intent(MyOutgoingCustomDialog.this, FullScreenHolder.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                                intent.putExtra("phone_no", phone_no);
-                                intent.putExtra("message", message);
-                                intent.putExtra("image", image);
-                                intent.putExtra("type", type);
-                                intent.putExtra("talk_time", talkTime);
-                                intent.putExtra("screen_type", "half");
+                            if(type.equals("vid")) {
+                                final ProgressDialog progress = new ProgressDialog(MyOutgoingCustomDialog.this);
+                                progress.setTitle("Connecting");
+                                progress.setMessage("Please wait while we connect to devices...");
+                                progress.show();
 
-                                new Handler().postDelayed(new Runnable() {
+                                Runnable progressRunnable = new Runnable() {
+
                                     @Override
                                     public void run() {
-                                        startActivity(intent);
+                                        progress.cancel();
+                                        //  PackageManager pm = mContext.getPackageManager();
+                                        //  ComponentName componentName = new ComponentName(mContext, MyOutgoingCallHandler.class);
+                                        //  pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                                        //setResultData(phone_no);
+                                        Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                        callIntent.setData(Uri.parse("tel:" + phone_no));
+                                        int simSlot = getDefaultSimSlot(MyOutgoingCustomDialog.this);
+                                        callIntent.putExtra("com.android.phone.force.slot", true);
+                                        callIntent.putExtra("com.android.phone.extra.slot", simSlot);
+                                        startActivity(callIntent);
+                                        finish();
                                     }
-                                }, 2000);
+                                };
+
+                                Handler pdCanceller = new Handler();
+                                pdCanceller.postDelayed(progressRunnable, 5000);
+
+                            }else {
+                                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                callIntent.setData(Uri.parse("tel:" + phone_no));
+                                int simSlot = getDefaultSimSlot(MyOutgoingCustomDialog.this);
+                                callIntent.putExtra("com.android.phone.force.slot", true);
+                                callIntent.putExtra("com.android.phone.extra.slot", simSlot);
+                                callIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                startActivity(callIntent);
+                                finish();
+                            }
+
+                            if(!image.equals("none")){
+                                if(type.equals("vid")) {
+
+                                    final Intent intent = new Intent(MyOutgoingCustomDialog.this, FullScreenVideoHolder.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                                    intent.putExtra("phone_no",phone_no);
+                                    intent.putExtra("message",message);
+                                    intent.putExtra("image",videoPath);
+                                    intent.putExtra("type", type);
+                                    intent.putExtra("talk_time",talkTime);
+                                    intent.putExtra("screen_type","half");
+
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run () {
+                                            startActivity(intent);
+                                        }
+                                    },7000);
+
+
+                                }else{
+                                    final Intent intent = new Intent(MyOutgoingCustomDialog.this, FullScreenHolder.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                                    intent.putExtra("phone_no", phone_no);
+                                    intent.putExtra("message", message);
+                                    intent.putExtra("image", image);
+                                    intent.putExtra("type", type);
+                                    intent.putExtra("talk_time", talkTime);
+                                    if(type.equals("jpg")){
+                                        intent.putExtra("screen_type", "sender_full");
+                                    }else {
+                                        intent.putExtra("screen_type", "half");
+                                    }
+
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            startActivity(intent);
+                                        }
+                                    }, 2000);
+                                }
                             }
                         }
 
                         message = "";
                     }else{
 
-                        Long tsLong = (System.currentTimeMillis()/1000);
-                        String ts = tsLong.toString();
+                        if(null == mName){
+                            mName = "";
+                        }
                         mName = getFirstWord(mName);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                //Do something here
-                                String message_send = "";
-                                String message_senda = "";
-                                try {
-                                    message_send = URLEncoder.encode(mName.toUpperCase()+" CALLING:"+message, "UTF-8");
-                                    message_senda = URLEncoder.encode(mName.toUpperCase()+" CALLING:"+message, "UTF-8");
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
+                        if(!message.equals("")) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //Do something here
+                                    String message_send = "";
+                                    String message_senda = "";
+                                    try {
+                                        message_send = URLEncoder.encode(mPhoneNo+"("+mName.toUpperCase() + ") CALLING:" + message, "UTF-8");
+                                        message_senda = URLEncoder.encode(mPhoneNo+"("+mName.toUpperCase() + ") CALLING:" + message, "UTF-8");
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    String flash_number = getLastnCharacters(phone_no, 10);
+                                    String sUrl2 = "http://ringlerr.com/sms_api/?number=" + flash_number + "&message=" + message_send + "&messagea=" + message_senda + "&key=ponring";
+
+                                    //new GetUrlContentTask().execute(sUrl);
+                                    new GetUrlContentTask().execute(sUrl2);
+                                    message = "";
                                 }
-                                String flash_number = getLastnCharacters(phone_no, 10);
-                                String sUrl2 = "http://ringlerr.com/sms_api/?number="+flash_number+"&message="+message_send+"&messagea="+message_senda+"&key=ponring";
-
-                                //new GetUrlContentTask().execute(sUrl);
-                                new GetUrlContentTask().execute(sUrl2);
-                                message = "";
-                            }
-                        }, 10);
-
-
-//                        final ProgressDialog progress = new ProgressDialog(MyOutgoingCustomDialog.this);
-//                        progress.setTitle("Connecting");
-//                        progress.setMessage("Please wait while we connect to devices...");
-//                        progress.show();
+                            }, 10);
+                        }
 
                         Runnable progressRunnable = new Runnable() {
 
                             @Override
                             public void run() {
-                                //progress.cancel();
-                                //  PackageManager pm = mContext.getPackageManager();
-                                //  ComponentName componentName = new ComponentName(mContext, MyOutgoingCallHandler.class);
-                                //  pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                                //setResultData(phone_no);
                                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                                 callIntent.setData(Uri.parse("tel:" + phone_no));
                                 int simSlot = getDefaultSimSlot(MyOutgoingCustomDialog.this);
@@ -560,39 +794,7 @@ public class MyOutgoingCustomDialog extends Activity {
 
                         Handler pdCanceller = new Handler();
                         pdCanceller.postDelayed(progressRunnable, 100);
-
                     }
-                    //
-//                    callIntent.putExtra("com.android.phone.force.slot", true);
-//                    callIntent.putExtra("Cdma_Supp", true);
-//                    //Add all slots here, according to device.. (different device require different key so put all together)
-//                    for (String s : simSlotName)
-//                        callIntent.putExtra(s, 0); //0 or 1 according to sim.......
-//
-//                    //works only for API >= 21
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-//                        TelecomManager telecomManager = (TelecomManager) getSystemService(Context.TELECOM_SERVICE);
-//                        List<PhoneAccountHandle> phoneAccountHandleList = telecomManager.getCallCapablePhoneAccounts();
-//
-//                        if (sim== 0) {   //0 for sim1
-//                            for (String s : simSlotName)
-//                                callIntent.putExtra(s, 0); //0 or 1 according to sim.......
-//
-//                            if (phoneAccountHandleList != null && phoneAccountHandleList.size() > 0)
-//                                callIntent.putExtra("android.telecom.extra.PHONE_ACCOUNT_HANDLE", phoneAccountHandleList.get(0));
-//
-//                        } else {
-//                            for (String s : simSlotName)
-//                                callIntent.putExtra(s, 1); //0 or 1 according to sim.......
-//
-//                            if (phoneAccountHandleList != null && phoneAccountHandleList.size() > 1)
-//                                callIntent.putExtra("android.telecom.extra.PHONE_ACCOUNT_HANDLE", phoneAccountHandleList.get(1));
-//
-//                        }
-//                    }
-
-                    Log.d("test", "stoping activity");
-                    //Log.d("test", result);
                 }
             });
         } catch (Exception e) {
@@ -693,11 +895,7 @@ public class MyOutgoingCustomDialog extends Activity {
                 }else{
                     if(userIdentity.app_remove==null){
                         is_ringlerr = false;
-                    }else if(userIdentity.app_remove==true){
-                        is_ringlerr = false;
-                    }else{
-                        is_ringlerr = true;
-                    }
+                    }else is_ringlerr = userIdentity.app_remove != true;
                 }
 
             }
@@ -758,13 +956,13 @@ public class MyOutgoingCustomDialog extends Activity {
 
     private void initializeContent()
     {
-        counter   = (TextView) findViewById(R.id.counter);
-        dialog_ok   = (ImageButton) findViewById(R.id.dialog_ok);
-        sendMgs = (EditText)findViewById(R.id.editTextDialogUserInput);
+        counter   = findViewById(R.id.counter);
+        dialog_ok   = findViewById(R.id.dialog_ok);
+        sendMgs = findViewById(R.id.editTextDialogUserInput);
         sendMgs.addTextChangedListener(mTextEditorWatcher);
         //TextView tview = (TextView)findViewById(R.id.textview1);
-        //String result = sendMgs.getText().toString();
-        //tview.setText(result);
+
+
     }
 
     private final TextWatcher mTextEditorWatcher = new TextWatcher() {
@@ -803,19 +1001,24 @@ public class MyOutgoingCustomDialog extends Activity {
         switch (requestCode) {
             case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(userChoosenTask.equals("Take Photo"))
+                    if(userChoosenTask.equals("Send Callfie"))
                         cameraIntent();
+                    else if(userChoosenTask.equals("Send Snap !"))
+                        galleryIntent();
                     else if(userChoosenTask.equals("Choose from Gallery"))
                         galleryIntent();
-                    else if(userChoosenTask.equals("Choose from Library"))
-                        try {
-                            libraryIntent();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    else if(userChoosenTask.equals("Choose from Library")) {
+                        libraryIntent();
+                    }else if(userChoosenTask.equals("Send Video")){
+                        takeVideo();
+                    }
                 } else {
                     //code for deny
                 }
+                break;
+            case MY_PERMISSIONS_REQUEST_CAMERA:
+                if(userChoosenTask.equals("Send Callfie"))
+                    cameraIntent();
                 break;
         }
     }
@@ -823,37 +1026,50 @@ public class MyOutgoingCustomDialog extends Activity {
     private void selectImage(CharSequence[] selectItems) {
         final CharSequence[] items = selectItems;
         AlertDialog.Builder builder = new AlertDialog.Builder(MyOutgoingCustomDialog.this);
-        builder.setTitle("Add Photo!");
+        //builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 boolean result=Utility.checkPermission(MyOutgoingCustomDialog.this);
-                if (items[item].equals("Take Photo")) {
-                    userChoosenTask="Take Photo";
-                    if(result)
+                if (items[item].equals("Send Callfie")) {
+                    userChoosenTask="Send Callfie";
+                    if(Build.VERSION.SDK_INT>=android.os.Build.VERSION_CODES.M) {
+                        if (ContextCompat.checkSelfPermission(MyOutgoingCustomDialog.this,
+                                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+                            ActivityCompat.requestPermissions(MyOutgoingCustomDialog.this,
+                                    new String[]{Manifest.permission.CAMERA},
+                                    MY_PERMISSIONS_REQUEST_CAMERA);
+
+                        } else {
+                            if (result) {
+                                cameraIntent();
+                            }
+                        }
+                    }else{
                         cameraIntent();
+                    }
+
                 } else if (items[item].equals("Choose from Gallery")) {
                     userChoosenTask="Choose from Gallery";
                     if(result)
                         galleryIntent();
+                }else if (items[item].equals("Send Snap !")) {
+                    userChoosenTask="Send Snap !";
+                    if(result)
+                        snapIntent();
+                }else if(items[item].equals("Send Video")){
+                    takeVideo();
                 }else if (items[item].equals("Choose from Library")) {
                     userChoosenTask="Choose from Library";
-                    if(result)
-                        try {
-                            libraryIntent();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    if(result) {
+                        libraryIntent();
+                    }
                 }else if (items[item].equals("Choose Theme")) {
                     userChoosenTask="Choose Theme";
-                    if(result)
-                        try {
-                            themeIntent();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
+                    if(result) {
+                        themeIntent();
+                    }
                 }
             }
         });
@@ -863,22 +1079,14 @@ public class MyOutgoingCustomDialog extends Activity {
     private void selectGifLibrary(){
         boolean result=Utility.checkPermission(MyOutgoingCustomDialog.this);
         if(result){
-            try {
-                libraryIntent();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            libraryIntent();
         }
     }
 
     private void selectThemeLibrary(){
         boolean result=Utility.checkPermission(MyOutgoingCustomDialog.this);
         if(result) {
-            try {
-                themeIntent();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            themeIntent();
         }
 
     }
@@ -887,18 +1095,47 @@ public class MyOutgoingCustomDialog extends Activity {
 
         boolean result=Utility.checkPermission(MyOutgoingCustomDialog.this);
         if(result) {
-            try {
-                stickerIntent();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            stickerIntent();
         }
+    }
+
+    private File createTemporaryFile(String part, String ext) throws Exception
+    {
+        File tempDir= Environment.getExternalStorageDirectory();
+        tempDir=new File(tempDir.getAbsolutePath()+"/.temp/");
+        if(!tempDir.exists())
+        {
+            tempDir.mkdirs();
+        }
+        return File.createTempFile(part, ext, tempDir);
     }
 
     private void cameraIntent()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CAMERA);
+        File photo;
+        try
+        {
+            // place where to store camera taken picture
+            photo = this.createTemporaryFile("picture", ".jpg");
+            photo.delete();
+            mImageUri = FileProvider.getUriForFile(this, "com.luncher.bounjour.ringlerr.fileprovider", photo);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+            } else {
+                intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+            }
+
+            startActivityForResult(intent, REQUEST_CAMERA);
+        }
+        catch(Exception e)
+        {
+            Toast.makeText(this, e.toString()+" Please check SD card! Image shot is impossible!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void galleryIntent()
@@ -911,21 +1148,33 @@ public class MyOutgoingCustomDialog extends Activity {
         startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
     }
 
-    private void libraryIntent() throws IOException {
+    private void takeVideo() {
+        Intent intent = new Intent(MyOutgoingCustomDialog.this, EnregistrementVideoStackActivity.class);
+        //Start details activity
+        startActivityForResult(intent, PICK_VIDEO_REQUEST);
+    }
+
+    private void snapIntent() {
+            Intent intent = new Intent(MyOutgoingCustomDialog.this, SnapActivity.class);
+            //Start details activity
+            startActivityForResult(intent, PICK_SNAP_REQUEST);
+    }
+
+    private void libraryIntent() {
         Intent intent = new Intent(MyOutgoingCustomDialog.this, GridActivity.class);
         //Start details activity
         startActivityForResult(intent, PICK_ICON_REQUEST);
 
     }
 
-    private void stickerIntent() throws IOException {
+    private void stickerIntent() {
         Intent intent = new Intent(MyOutgoingCustomDialog.this, StickerActivity.class);
         //Start details activity
         startActivityForResult(intent, PICK_STICKER_REQUEST);
 
     }
 
-    private void themeIntent() throws IOException {
+    private void themeIntent() {
         Intent intent = new Intent(MyOutgoingCustomDialog.this, ThemeActivity.class);
         //Start details activity
         startActivityForResult(intent, PICK_THEME_REQUEST);
@@ -951,38 +1200,43 @@ public class MyOutgoingCustomDialog extends Activity {
                 onCaptureImageResult(data);
             else if (requestCode == PICK_ICON_REQUEST) {
                 String res = data.getExtras().getString("POS_ICON");
-                try {
-                    onSelectFromLibraryResult(res, "libImage");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                onSelectFromLibraryResult(res, "libImage");
             }else if (requestCode == PICK_THEME_REQUEST) {
                 String res = data.getExtras().getString("POS_THEME");
-                try {
-                    onSelectFromLibraryResult(res, "themeImage");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                onSelectFromLibraryResult(res, "themeImage");
             }else if (requestCode == FINAL_EDIT_IMG){
                 String res = data.getExtras().getString("FINAL_IMAGE");
                 setEditImage(res);
+            }else if (requestCode == FINAL_EDIT_SNAP){
+                String res = data.getExtras().getString("FINAL_IMAGE");
+                setSnapEditImage(res);
             }else if (requestCode == PICK_STICKER_REQUEST){
                 String res = data.getExtras().getString("POS_STICKER");
-                try {
-                    onSelectFromStickerResult(res);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                onSelectFromStickerResult(res);
             }else if(requestCode == Crop.REQUEST_CROP){
                 String imgPath = getPath(getApplicationContext(), Crop.getOutput(data));
                 Intent in1 = new Intent(this, photoEditor.class);
                 in1.putExtra("picture",imgPath);
                 startActivityForResult(in1, FINAL_EDIT_IMG);
+            }else if(requestCode == PICK_SNAP_REQUEST){
+                Uri imgUri = data.getParcelableExtra("POS_SNAP");
+                String imgPath = getRealPathFromURI(imgUri);
+                Intent in1 = new Intent(this, photoEditor.class);
+                in1.putExtra("picture",imgPath);
+                startActivityForResult(in1, FINAL_EDIT_SNAP);
+            }else if(requestCode == PICK_VIDEO_REQUEST){
+                String videoPath = data.getExtras().getString("POS_VIDEO");
+                //String videoData = data.getExtras().getString("POS_VIDEODATA");
+                try {
+                    setVideo(videoPath);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    private void onSelectFromLibraryResult(String res, String dType) throws IOException {
+    private void onSelectFromLibraryResult(String res, String dType) {
 
         if(dType.equals("libImage")){
             libImage = res;
@@ -990,49 +1244,89 @@ public class MyOutgoingCustomDialog extends Activity {
             themeImage = res;
         }
 
+        videoLayout.setVisibility(View.GONE);
+        videoView.stopPlayback();
+        videoView.clearAnimation();
+        videoView.suspend(); // clears media player
+        videoView.setVideoURI(null);
+        videoView.setVisibility(View.GONE);
+        videoData = "none";
+
           clear_type = "img";
 
         String asseturl = Environment.getExternalStorageDirectory() + "/ringerrr/animation/"+res;
-        RequestOptions o = new RequestOptions();
         Glide.with(this).asGif()
                 .load(asseturl)
-                .apply(o.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
                 .into(ivImage);
     }
 
-    private void onSelectFromStickerResult(String res) throws IOException {
+    private void onSelectFromStickerResult(String res) {
+
+        videoLayout.setVisibility(View.GONE);
+        videoView.stopPlayback();
+        videoView.clearAnimation();
+        videoView.suspend(); // clears media player
+        videoView.setVideoURI(null);
+        videoView.setVisibility(View.GONE);
+        videoData = "none";
+
         String iconsStoragePath = Environment.getExternalStorageDirectory() + "/ringerrr/stickers/"+res;
-        File istr = new  File(iconsStoragePath);
-        Bitmap bitmap = BitmapFactory.decodeFile(istr.getAbsolutePath());
         stickerImage = res;
         clear_type = "img";
-        ivImage.setImageBitmap(bitmap);
+
+        Glide.with(this)
+                .load(iconsStoragePath)
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                .into(ivImage);
     }
 
     private void onCaptureImageResult(Intent data) {
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
 
-        String filePath = Environment.getExternalStorageDirectory()+"/"+System.currentTimeMillis() + ".jpg";
-        File destination = new File(filePath);
+        this.getContentResolver().notifyChange(mImageUri, null);
+        ContentResolver cr = this.getContentResolver();
+        Bitmap thumbnail;
+        try
+        {
 
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            videoLayout.setVisibility(View.GONE);
+            videoView.stopPlayback();
+            videoView.clearAnimation();
+            videoView.suspend(); // clears media player
+            videoView.setVideoURI(null);
+            videoView.setVisibility(View.GONE);
+            videoData = "none";
+
+            thumbnail = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+
+            String filePath = Environment.getExternalStorageDirectory()+"/"+System.currentTimeMillis() + ".jpg";
+            File destination = new File(filePath);
+
+            FileOutputStream fo;
+            try {
+                destination.createNewFile();
+                fo = new FileOutputStream(destination);
+                fo.write(bytes.toByteArray());
+                fo.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            String imgPath = filePath;
+            Intent in1 = new Intent(this, photoEditor.class);
+            in1.putExtra("picture",imgPath);
+            startActivityForResult(in1, FINAL_EDIT_IMG);
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
         }
 
-        String imgPath = filePath;
-        Intent in1 = new Intent(this, photoEditor.class);
-        in1.putExtra("picture",imgPath);
-        startActivityForResult(in1, FINAL_EDIT_IMG);
+
 //        imagePath = thumbnail;
 //        ivImage.setImageBitmap(thumbnail);
     }
@@ -1054,7 +1348,7 @@ public class MyOutgoingCustomDialog extends Activity {
     @SuppressWarnings("deprecation")
     private void onSelectFromGalleryResult(Intent data) throws IOException {
 
-        Bitmap bm=null;
+        Bitmap bm;
         if (data != null) {
             try {
                 bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
@@ -1076,6 +1370,7 @@ public class MyOutgoingCustomDialog extends Activity {
             if(mime.equals("image/gif")){
 
                 String realPath = getPath(getApplicationContext(), selectedImageURI);
+                assert realPath != null;
                 File imageFile = new File(realPath);
                 FileInputStream fileInputStream = new FileInputStream(imageFile);
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -1089,9 +1384,8 @@ public class MyOutgoingCustomDialog extends Activity {
                     }
 
                     fileInputStream.close();
-                    byte[] bytes = outStream.toByteArray();
 
-                    gifImage = bytes;
+                    gifImage = outStream.toByteArray();
                     clear_type = "gif";
 
                     Glide.with(this).asGif()
@@ -1168,7 +1462,7 @@ public class MyOutgoingCustomDialog extends Activity {
 
     private void beginCrop(Uri source) {
         Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
-        Crop.of(source, destination).asSquare().start(this);
+        Crop.of(source, destination).start(this);
     }
 
 
@@ -1178,8 +1472,92 @@ public class MyOutgoingCustomDialog extends Activity {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         Bitmap bm = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
 
-        Bitmap bMapScaled = resize(bm, 450, 450);
+        videoLayout.setVisibility(View.GONE);
+        videoView.stopPlayback();
+        videoView.clearAnimation();
+        videoView.suspend(); // clears media player
+        videoView.setVideoURI(null);
+        videoView.setVisibility(View.GONE);
+        videoData = "none";
+
+        Bitmap bMapScaled = resize(bm, 960, 960);
         imagePath = bMapScaled;
+        videoPath = image.getAbsolutePath();
+        clear_type = "img";
+        ivImage.setImageBitmap(bMapScaled);
+    }
+
+    private void setVideo(String path) throws FileNotFoundException {
+        videoLayout.setVisibility(View.VISIBLE);
+        videoView.setVideoPath(path);
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+                videoView.start();
+            }
+        });
+
+        FileInputStream fileInputStream = new FileInputStream(path);
+        String videoStringData = convertVideoToBase(fileInputStream);
+        videoData = videoStringData;
+        videoView.setVisibility(View.VISIBLE);
+        videoPath = path;
+        clear_type = "vid";
+
+        imagePath = null;
+        snapImagePath = null;
+        gifImage = null;
+        stickerImage = "none";
+        libImage = "none";
+        themeImage = "none";
+        ivImage.setImageDrawable(null);
+    }
+
+
+    public String convertVideoToBase(FileInputStream inputStream){
+
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int len = 0;
+        try
+        {
+            while ((len = inputStream.read(buffer)) != -1)
+            {
+                byteBuffer.write(buffer, 0, len);
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println("converted!");
+
+        String videoData="";
+        //Converting bytes into base64
+        videoData = Base64.encodeToString(byteBuffer.toByteArray(), Base64.DEFAULT);
+
+        return videoData;
+    }
+
+    private void setSnapEditImage(String path){
+
+        File image = new File(path);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap bm = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+
+        videoLayout.setVisibility(View.GONE);
+        videoView.stopPlayback();
+        videoView.clearAnimation();
+        videoView.suspend(); // clears media player
+        videoView.setVideoURI(null);
+        videoView.setVisibility(View.GONE);
+        videoData = "none";
+
+        Bitmap bMapScaled = resize(bm, 960, 960);
+        imagePath = null;
+        snapImagePath = bMapScaled;
         clear_type = "img";
         ivImage.setImageBitmap(bMapScaled);
     }
@@ -1221,30 +1599,6 @@ public class MyOutgoingCustomDialog extends Activity {
         //Base64.de
         return encImage;
     }
-
-    private Emitter.Listener onRecive = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            MyOutgoingCustomDialog.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-//                    JSONObject data = (JSONObject) args[0];
-//                    String username;
-//                    String message;
-//                    try {
-//                        username = data.getString("username");
-//                        message = data.getString("message");
-//                    } catch (JSONException e) {
-//                        return;
-//                    }
-
-                    MyOutgoingCustomDialog.this.finish();
-                    System.exit(0);
-                }
-            });
-        }
-    };
-
 
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access
@@ -1350,7 +1704,6 @@ public class MyOutgoingCustomDialog extends Activity {
         return null;
     }
 
-
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
@@ -1373,6 +1726,24 @@ public class MyOutgoingCustomDialog extends Activity {
      */
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // If we've received a touch notification that the user has touched
+        // outside the app, finish the activity.
+        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+            finish();
+            return true;
+        }
+
+        // Delegate everything else to Activity.
+        return super.onTouchEvent(event);
     }
 
 }

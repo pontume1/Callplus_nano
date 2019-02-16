@@ -30,17 +30,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="8dp"
+            android:drawableLeft="@drawable/contact_email_small"
+            android:drawablePadding="5dip"
             android:text="message"
-            android:textSize="15sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/date_time"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="8dp"
+            android:layout_margin="8dp"
+            android:drawableLeft="@drawable/ic_timer_black_48dp"
+            android:drawablePadding="5dip"
             android:text="date_time"
             android:textStyle="italic" />
 
@@ -48,7 +50,9 @@
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_margin="8dp"
+            android:drawableLeft="@drawable/my_profile_alarmn"
+            android:drawablePadding="5dip"
             android:text="Shared With" />
 
         <View

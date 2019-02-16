@@ -7,6 +7,10 @@ import android.os.Build;
 //import com.google.firebase.database.FirebaseDatabase;
 //import com.squareup.leakcanary.LeakCanary;
 
+//import com.squareup.leakcanary.LeakCanary;
+
+import com.luncher.bounjour.ringlerr.CallManager;
+
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
@@ -28,6 +32,8 @@ public class MyDexApplication extends MultiDexApplication {
         // Normal app init code...
         createNotificationChannel();
         createBoundNotificationChannel();
+
+        CallManager.init(this);
     }
 
     private void createNotificationChannel() {

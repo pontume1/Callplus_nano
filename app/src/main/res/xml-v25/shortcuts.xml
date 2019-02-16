@@ -1,0 +1,19 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="sos"
+        android:enabled="true"
+        android:icon="@drawable/sos"
+        android:shortcutShortLabel="@string/sos_compose_shortcut_short_label1"
+        android:shortcutLongLabel="@string/sos_compose_shortcut_long_label1"
+        android:shortcutDisabledMessage="@string/sos_compose_disabled_message1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.luncher.bounjour.ringlerr"
+            android:targetClass="com.luncher.bounjour.ringlerr.activity.SosActivity" />
+        <!-- If your shortcut is associated with multiple intents, include them
+             here. The last intent in the list determines what the user sees when
+             they launch this shortcut. -->
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <!-- Specify more shortcuts here. -->
+</shortcuts>

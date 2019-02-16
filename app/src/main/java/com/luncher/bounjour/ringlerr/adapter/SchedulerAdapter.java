@@ -23,6 +23,7 @@ import com.luncher.bounjour.ringlerr.model.Scheduler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,7 +74,7 @@ public class SchedulerAdapter extends RecyclerView.Adapter<SchedulerAdapter.MyVi
         Long timestamp = schedule.getSTime();
         final Integer id = schedule.getSid();
         Date date = new Date(timestamp);
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyy HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyy HH:mm:ss", Locale.US);
         String formattedDate = formatter.format(date);
 
         holder.shared_via.setText("Shared Via "+schedule.getSpinnerType());
@@ -94,9 +95,10 @@ public class SchedulerAdapter extends RecyclerView.Adapter<SchedulerAdapter.MyVi
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.delete_menu:
-                                MyDbHelper myDbHelper = new MyDbHelper(mContext, null, null, 1);
+                                MyDbHelper myDbHelper = new MyDbHelper(mContext, null, 1);
                                 myDbHelper.removeScheduler(id);
-                                notifyItemChanged(position);
+                                schedules.remove(position);
+                                SchedulerAdapter.this.notifyDataSetChanged();
 
                                 Intent mypIntent = new Intent(mContext, SchedulerAlarmDialog.class);
                                 PendingIntent pendingIntent = PendingIntent.getActivity(mContext, id, mypIntent, PendingIntent.FLAG_UPDATE_CURRENT);
