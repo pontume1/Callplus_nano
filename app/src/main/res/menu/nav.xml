@@ -17,4 +17,14 @@
         android:orderInCategory="100"
         android:title="@string/action_add_Scheduler"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_notification"
+        android:orderInCategory="100"
+        android:title="@string/action_add_notifications"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_coupons"
+        android:orderInCategory="100"
+        android:title="@string/action_coupons"
+        app:showAsAction="never" />
 </menu>

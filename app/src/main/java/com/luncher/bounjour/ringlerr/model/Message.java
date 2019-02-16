@@ -13,6 +13,7 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class Message {
 
+    public int id;
     public String from;
     public String to;
     public String message;
@@ -27,7 +28,8 @@ public class Message {
     public Message() {
     }
 
-    public Message(String from, String to, String message, String image, String type, String seen, String datetime, String talk_time) {
+    public Message(int id, String from, String to, String message, String image, String type, String seen, String datetime, String talk_time) {
+        this.id = id;
         this.from = from;
         this.to = to;
         this.message = message;
@@ -38,6 +40,9 @@ public class Message {
         this.talk_time = talk_time;
     }
 
+    public int getId() {
+        return id;
+    }
     public String getFrom() {
         return from;
     }
@@ -61,6 +66,32 @@ public class Message {
     }
     public String getTalk_time() {
         return talk_time;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    public void setFrom(String from) {
+        this.from = from;
+    }
+    public void setTo(String to) { this.to = to; }
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    public void setImage(String image) {
+        this.image = image;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+    public void setSeen(String seen) {
+        this.seen = seen;
+    }
+    public void setDateAndTime(String datetime) {
+        this.datetime = datetime;
+    }
+    public void setTalk_time(String talk_time) {
+        this.talk_time =  talk_time;
     }
 
     //7042083338

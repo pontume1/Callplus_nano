@@ -70,7 +70,7 @@
                 android:layout_height="25dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="102dp"
+                android:layout_marginEnd="94dp"
                 android:adjustViewBounds="false"
                 android:background="@color/fui_transparent"
                 android:scaleType="fitCenter"
@@ -82,7 +82,7 @@
                 android:layout_height="25dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="56dp"
+                android:layout_marginEnd="53dp"
                 android:adjustViewBounds="false"
                 android:background="@drawable/flag_transparent"
                 android:contentDescription="call"
@@ -92,13 +92,13 @@
 
             <TextView
                 android:id="@+id/dnButton"
-                android:layout_width="18dp"
-                android:layout_height="15dp"
+                android:layout_width="44dp"
+                android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="12dp"
                 android:contentDescription="call"
                 android:drawableRight="@android:drawable/arrow_down_float"
+                android:paddingEnd="10dp"
                 android:saveEnabled="false"
                 android:scaleType="centerCrop"
                 android:textSize="12sp" />
@@ -126,7 +126,7 @@
             android:layout_height="40dp"
             android:background="#f5f5f5"
             android:orientation="horizontal"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <ImageButton
                 android:id="@+id/msgButton"

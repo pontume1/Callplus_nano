@@ -2,6 +2,7 @@ package com.luncher.bounjour.ringlerr.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -41,6 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -73,6 +75,8 @@ public class ProfileSetting extends AppCompatActivity {
             Manifest.permission.WRITE_CONTACTS,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.WRITE_CALL_LOG,
     };
     String[] permissionsList = {};
 
@@ -101,7 +105,23 @@ public class ProfileSetting extends AppCompatActivity {
         profile_name.setText(mName);
         profile_email.setText(mEmail);
 
-        checkPermissions();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Ringlerr needs the following permissions.");
+        // Specify the message text for alert dialog
+        String messageText = "1)Storage: To send and receive images while calling"+
+                "\n2)Contacts: To sync and connect with Ringlerr users"+
+                "\n3)Call: To make Ringlerr calls to your contacts";
+        builder.setMessage(messageText)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //do things
+                        checkPermissions();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
 
         email_sign_in_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -303,6 +323,7 @@ public class ProfileSetting extends AppCompatActivity {
                                     .load(new File(resultUri.getPath())) // Uri of the picture
                                     .into(picture);
                             mProgressDialog.dismiss();
+                            Toast.makeText(ProfileSetting.this, "Picture updated!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

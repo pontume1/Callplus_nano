@@ -96,11 +96,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
 
-        ccp = (CountryCodePicker) findViewById(R.id.ccp);
-        editTextCarrierNumber = (EditText) findViewById(R.id.editText_carrierNumber);
+        ccp = findViewById(R.id.ccp);
+        editTextCarrierNumber = findViewById(R.id.editText_carrierNumber);
         ccp.registerCarrierNumberEditText(editTextCarrierNumber);
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
 
         // Initialize phone auth callbacks
         // [START phone_auth_callbacks]
@@ -265,7 +265,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                return;
+
             }
         }
     }
@@ -298,7 +298,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //            cancel = true;
 //        }
 
-        if(!ccp.isValidFullNumber()){
+        if(!ccp.isValidFullNumber() && !phone.contains("+916")){
             editTextCarrierNumber.setError(getString(R.string.error_invalid_phone));
             focusView = editTextCarrierNumber;
             cancel = true;

@@ -1,198 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/keyboardLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:foregroundGravity="bottom"
-    android:gravity="bottom">
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/design_default_color_background">
 
-    <EditText
-        android:id="@+id/EditTextPhoneNumber"
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="6dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:padding="0dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="1dp"
+                    android:text="Ringlerr"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/add_to_contact"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/ic_add_circle_white_24dp" />
+
+            </RelativeLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/keyboardLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="0dp"
-        android:background="#FFF5F5F5"
-        android:gravity="fill_vertical|center"
-        android:inputType="phone"
-        android:maxLines="1"
-        android:padding="5dp"
-        android:scrollHorizontally="true"
-        android:textColor="@color/colorAccent"
-        android:textIsSelectable="true"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:layout_gravity="bottom"
+        android:foregroundGravity="bottom"
+        android:gravity="bottom">
 
-    <LinearLayout
-        android:id="@+id/Row1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/EditTextPhoneNumber"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/blueGray50">
-        <!--  Buttons 1 2 3 -->
-        <ImageButton
-            android:id="@+id/Button1"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_1_no_vm" />
 
-        <ImageButton
-            android:id="@+id/Button2"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_2" />
+        <EditText
+            android:id="@+id/EditTextPhoneNumber"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="0dp"
+            android:background="#FFF5F5F5"
+            android:gravity="fill_vertical|center"
+            android:inputType="phone"
+            android:maxLines="1"
+            android:padding="5dp"
+            android:scrollHorizontally="true"
+            android:textColor="@color/colorAccent"
+            android:textIsSelectable="true"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/Button3"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_3" />
+        <LinearLayout
+            android:id="@+id/Row1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/EditTextPhoneNumber"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/blueGray50">
+            <!--  Buttons 1 2 3 -->
+            <ImageButton
+                android:id="@+id/Button1"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_1_no_vm" />
 
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/Button2"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_2" />
 
-    <!-- Buttons 4 5 6 -->
-    <LinearLayout
-        android:id="@+id/Row2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/Row1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/blueGray50">
+            <ImageButton
+                android:id="@+id/Button3"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_3" />
 
-        <ImageButton
-            android:id="@+id/Button4"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_4" />
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/Button5"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_5" />
+        <!-- Buttons 4 5 6 -->
+        <LinearLayout
+            android:id="@+id/Row2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Row1"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/blueGray50">
 
-        <ImageButton
-            android:id="@+id/Button6"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_6" />
+            <ImageButton
+                android:id="@+id/Button4"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_4" />
 
-    </LinearLayout>
-    <!-- Buttons 7 8 9 -->
-    <LinearLayout
-        android:id="@+id/Row3"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/Row2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/gray200">
+            <ImageButton
+                android:id="@+id/Button5"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_5" />
 
-        <ImageButton
-            android:id="@+id/Button7"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_7" />
+            <ImageButton
+                android:id="@+id/Button6"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_6" />
 
-        <ImageButton
-            android:id="@+id/Button8"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_8" />
+        </LinearLayout>
+        <!-- Buttons 7 8 9 -->
+        <LinearLayout
+            android:id="@+id/Row3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Row2"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/blueGray50">
 
-        <ImageButton
-            android:id="@+id/Button9"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_9" />
-    </LinearLayout>
-    <!-- Buttons * 0 # -->
-    <LinearLayout
-        android:id="@+id/Row4"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/Row3"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/blueGray50">
+            <ImageButton
+                android:id="@+id/Button7"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_7" />
 
-        <ImageButton
-            android:id="@+id/ButtonStar"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_star" />
+            <ImageButton
+                android:id="@+id/Button8"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_8" />
 
-        <ImageButton
-            android:id="@+id/Button0"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_0" />
+            <ImageButton
+                android:id="@+id/Button9"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_9" />
+        </LinearLayout>
+        <!-- Buttons * 0 # -->
+        <LinearLayout
+            android:id="@+id/Row4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Row3"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/blueGray50">
 
-        <ImageButton
-            android:id="@+id/ButtonHash"
-            style="@style/DialerButton"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:src="@drawable/dial_num_pound" />
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/ButtonStar"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_star" />
 
-    <LinearLayout
-        android:id="@+id/Row5"
-        android:layout_width="fill_parent"
-        android:layout_height="48.0dip"
-        android:layout_below="@id/Row4"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/blueGray50">
+            <ImageButton
+                android:id="@+id/Button0"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_0" />
 
-        <ImageButton
-            android:id="@+id/ButtonCallRinglerr"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_weight="2"
-            android:background="@drawable/bg_button"
-            android:onClick="onClick"
-            android:scaleType="fitCenter"
-            android:src="@drawable/r_call" />
+            <ImageButton
+                android:id="@+id/ButtonHash"
+                style="@style/DialerButton"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:src="@drawable/dial_num_pound" />
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/ButtonCall"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_weight="2"
-            android:background="@drawable/bg_button"
-            android:onClick="onClick"
-            android:scaleType="fitCenter"
-            android:src="@drawable/call" />
+        <LinearLayout
+            android:id="@+id/Row5"
+            android:layout_width="fill_parent"
+            android:layout_height="48.0dip"
+            android:layout_below="@id/Row4"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/blueGray50">
 
-        <ImageButton
-            android:id="@+id/ButtonDelete"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/blueGray50"
-            android:onClick="onClick"
-            android:src="@drawable/button_backspace" />
-    </LinearLayout>
-</RelativeLayout>
+            <ImageButton
+                android:id="@+id/ButtonCallRinglerr"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="2"
+                android:background="@drawable/bg_button"
+                android:onClick="onClick"
+                android:scaleType="fitCenter"
+                android:src="@drawable/r_call" />
+
+            <ImageButton
+                android:id="@+id/ButtonCall"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="2"
+                android:background="@drawable/bg_button"
+                android:onClick="onClick"
+                android:scaleType="fitCenter"
+                android:src="@drawable/call" />
+
+            <ImageButton
+                android:id="@+id/ButtonDelete"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/blueGray50"
+                android:onClick="onClick"
+                android:longClickable="true"
+                android:src="@drawable/button_backspace" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

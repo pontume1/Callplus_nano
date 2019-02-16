@@ -12,6 +12,8 @@
     <string name="action_add_dnd">Add DND</string>
     <string name="action_add_reminder">My Reminder</string>
     <string name="action_add_Scheduler">My Scheduler</string>
+    <string name="action_add_notifications">My Notifications</string>
+    <string name="action_coupons">My Rewards</string>
     <string name="action_follow_us">Follow Us</string>
 
     <!-- Strings related to login -->
@@ -63,6 +65,12 @@
     <string name="about_ringlerr">RINGLERR, mobile communication application is born with an idea of enabling users to connect faster and communicate on phone in real time.</string>
     <string name="copyright_string" formatted="false">\u00A9 2018 JUV Technologies Private Limited. \n All rights reserved</string>
     <string name="sugge" formatted="false">1) Call Vishal with message pick my call, it\'s very urgent. \n 2) I want to speak to Vishal for 1 min \n 3) Set up a reminder for Jay</string>
+
+    <string name="tracking_enabled_notif">Tracking is currently enabled. Tap to cancel.</string>
+    <string name="firebase_path">location</string>
+    <string name="sos_compose_shortcut_short_label1">Trigger SOS</string>
+    <string name="sos_compose_shortcut_long_label1">Trigger SOS</string>
+    <string name="sos_compose_disabled_message1">Disable SOS</string>
 
 
 </resources>

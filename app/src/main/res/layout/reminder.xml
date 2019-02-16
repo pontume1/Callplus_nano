@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="70dp"
@@ -63,20 +62,6 @@
             android:paddingTop="35dp">
 
             <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="5dp"
-                android:gravity="center_horizontal"
-                android:text=""
-                android:textColor="@color/textPrimary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
                 android:id="@+id/date_time_sel"
                 android:layout_width="match_parent"
                 android:layout_height="22dp"
@@ -131,16 +116,17 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="left"
-                android:layout_marginBottom="2dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="4dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="2dp"
                 android:drawableLeft="@drawable/ic_repeat_new"
                 android:drawablePadding="5dp"
                 android:text="fec_sel"
                 android:textColor="@color/textPrimary"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -179,9 +165,8 @@
             android:padding="2dp"
             android:visibility="visible">
 
-
             <ImageButton
-                android:id="@+id/time_pick"
+                android:id="@+id/dialog_contact"
                 android:layout_width="25dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center_vertical"
@@ -189,8 +174,9 @@
                 android:background="@color/fui_transparent"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/watch_reminder"
+                android:src="@drawable/ic_person_add_contact_24dp"
                 android:visibility="visible" />
+
 
             <ImageButton
                 android:id="@+id/date_pick"
@@ -201,7 +187,19 @@
                 android:background="@color/fui_transparent"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/calendar_reminder"
+                android:src="@drawable/ic_calendar_new"
+                android:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/time_pick"
+                android:layout_width="25dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_watch_new"
                 android:visibility="visible" />
 
             <ImageButton
@@ -213,7 +211,7 @@
                 android:background="@color/fui_transparent"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/recycle_reminder" />
+                android:src="@drawable/ic_remind" />
 
             <ImageButton
                 android:id="@+id/btnRepeat"
@@ -224,7 +222,8 @@
                 android:background="@color/fui_transparent"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/repeat_reminder" />
+                android:src="@drawable/ic_repeat_new"
+                android:visibility="gone" />
         </LinearLayout>
 
         <View
@@ -241,7 +240,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/hrl"
             android:layout_marginBottom="1dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:weightSum="2">
 
 
             <Button
@@ -254,21 +255,22 @@
                 android:text="Save"
                 android:textColor="@color/textColorPrimary" />
 
-            <Button
-                android:id="@+id/dialog_share"
-                android:layout_width="wrap_content"
-                android:layout_height="33dp"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_radius"
-                android:text="Share"
-                android:textColor="@color/textColorPrimary" />
+            <!--<Button-->
+            <!--android:id="@+id/dialog_share"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="33dp"-->
+            <!--android:layout_margin="5dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@drawable/button_radius"-->
+            <!--android:text="Share"-->
+            <!--android:textColor="@color/textColorPrimary" />-->
 
             <Button
                 android:id="@+id/close_btn_reminder"
                 android:layout_width="wrap_content"
                 android:layout_height="33dp"
                 android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/button_radius"
                 android:text="Cancel"
                 android:textColor="@color/textColorPrimary" />

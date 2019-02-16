@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.luncher.bounjour.ringlerr.MainActivity;
 import com.luncher.bounjour.ringlerr.MyDbHelper;
 import com.luncher.bounjour.ringlerr.MyOutgoingCustomDialog;
 import com.luncher.bounjour.ringlerr.R;
@@ -43,37 +44,29 @@ import com.luncher.bounjour.ringlerr.model.Blocks;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 
+import static android.Manifest.permission.READ_CONTACTS;
+
 public class callEndDialogFragment extends BottomSheetDialogFragment {
 
-    String phone_no;
-    String c_name;
-    int report_count;
-    int block_count;
-    TextView name;
-    TextView phone;
-    TextView reportText;
-    ImageView profile_image;
+    private String phone_no;
+    private String c_name;
+    private int report_count;
+    private int block_count;
+    private ImageView profile_image;
 
-    private ImageButton rCallButton;
-    private ImageButton whatsapp_btn;
-    private ImageButton blockButton;
-    private ImageButton inviteButton;
-    private ImageButton editButton;
-    private ImageButton reminderButton;
-    private ImageButton voiceButton;
     private ImageButton myFlagButton;
-    private ImageButton dialog_ok;
     //Context mContext;
     private DatabaseReference mRootRef;
     private String mPhoneNo;
-    SessionManager session;
-    View myView;
+    private static final int REQUEST_READ_CONTACTS = 444;
 
     public callEndDialogFragment() {
         // Required empty public constructor
@@ -95,37 +88,39 @@ public class callEndDialogFragment extends BottomSheetDialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        session = new SessionManager(getActivity().getApplicationContext());
+        SessionManager session = new SessionManager(getActivity().getApplicationContext());
         // get user data from session
         HashMap<String, String> user = session.getUserDetails();
         // phone
         mPhoneNo = user.get(SessionManager.KEY_PHONE);
 
 
-        rCallButton = view.findViewById(R.id.rCallButton);
-        whatsapp_btn = view.findViewById(R.id.whatsapp_btn);
-        blockButton = view.findViewById(R.id.blockButton);
-        inviteButton = view.findViewById(R.id.inviteButton);
-        editButton = view.findViewById(R.id.editButton);
-        voiceButton = view.findViewById(R.id.voiceButton);
-        reminderButton = view.findViewById(R.id.reminderButton);
+        ImageButton rCallButton = view.findViewById(R.id.rCallButton);
+        ImageButton whatsapp_btn = view.findViewById(R.id.whatsapp_btn);
+        ImageButton blockButton = view.findViewById(R.id.blockButton);
+        ImageButton reminderButton = view.findViewById(R.id.reminderButton);
+        ImageView block_image = view.findViewById(R.id.block_image);
         myFlagButton = view.findViewById(R.id.myFlagButton);
-        dialog_ok = view.findViewById(R.id.dialog_ok);
+        ImageView img_home = view.findViewById(R.id.img_home);
+        ImageButton dialog_ok = view.findViewById(R.id.dialog_ok);
         profile_image = view.findViewById(R.id.profile_image);
-        name = view.findViewById(R.id.caller_name);
-        phone = view.findViewById(R.id.phone);
+        TextView name = view.findViewById(R.id.caller_name);
+        TextView phone = view.findViewById(R.id.phone);
         //reportText = (TextView) view.findViewById(R.id.reportText);
 
         phone_no = getActivity().getIntent().getExtras().getString("phone_no");
         c_name = getActivity().getIntent().getExtras().getString("name");
 
-        if(c_name == null){
-            editButton.setVisibility(View.GONE);
-            inviteButton.setVisibility(View.VISIBLE);
-        }
-
         name.setText(c_name);
         phone.setText(phone_no);
+
+        //to-do not to call again when block
+        MyDbHelper myDbHelper;
+        myDbHelper = new MyDbHelper(getActivity(), null, 1);
+        String bnumber = myDbHelper.checkBlockNumber(phone_no);
+        if(!bnumber.equals("null")) {
+            block_image.setVisibility(View.VISIBLE);
+        }
 
         //phone_no = "+91"+getLastnCharacters(phone_no,10);
 
@@ -167,6 +162,21 @@ public class callEndDialogFragment extends BottomSheetDialogFragment {
                     @Override
                     public void run() {
                         startActivity(intent1);
+                    }
+                }, 100);
+            }
+        });
+
+        img_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent home_intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                home_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                home_intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(home_intent);
                     }
                 }, 100);
             }
@@ -232,6 +242,18 @@ public class callEndDialogFragment extends BottomSheetDialogFragment {
                             @Override public void onClick(DialogInterface dialog, int which) {
                                 Long tsLong = System.currentTimeMillis()/1000;
 
+                                if(null == c_name){
+                                    c_name = phone_no;
+                                }
+
+                                MyDbHelper myDbHelper;
+                                myDbHelper = new MyDbHelper(getActivity(), null, 1);
+                                String bnumber = myDbHelper.checkBlockNumber(phone_no);
+                                if(!bnumber.equals("null")){
+                                    Toast.makeText(getActivity(), c_name+" is already in your block list", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
                                 String key = mRootRef.child("blocks").child(mPhoneNo).push().getKey();
                                 Blocks blocks = new Blocks(mPhoneNo, phone_no, c_name, tsLong.toString());
                                 Map<String, Object> postValues = blocks.toMap();
@@ -244,9 +266,10 @@ public class callEndDialogFragment extends BottomSheetDialogFragment {
                                 int total_block = block_count+1;
                                 mRootRef.child("block_count").child(phone_no).child("count").setValue(total_block);
 
-                                MyDbHelper myDbHelper;
-                                myDbHelper = new MyDbHelper(getActivity().getApplicationContext(), null, null, 1);
+                                myDbHelper = new MyDbHelper(getActivity().getApplicationContext(), null, 1);
                                 myDbHelper.addBlockNumber(phone_no);
+
+                                Toast.makeText(getActivity().getApplicationContext(), c_name+" added to your block list", Toast.LENGTH_SHORT).show();
 
                             }
                         })
@@ -255,33 +278,35 @@ public class callEndDialogFragment extends BottomSheetDialogFragment {
             }
         });
 
-        inviteButton.setOnClickListener(new View.OnClickListener() {
+//        inviteButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                if (mayRequestContacts()) {
+//                    openContact(phone_no, c_name, getActivity().getApplicationContext());
+//                }
+//            }
+//        });
 
-            @Override
-            public void onClick(View v) {
-                //editContact(phone_no, c_name, callEndDialog.this);
-                openContact(phone_no, c_name,getActivity().getApplicationContext());
-            }
-        });
-
-        editButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                editContact(phone_no, c_name, getActivity().getApplicationContext());
-                //openContact(phone_no, c_name,callEndDialog.this);
-            }
-        });
-
-        voiceButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Uri sms_uri = Uri.parse("smsto:"+phone_no);
-                Intent sms_intent = new Intent(Intent.ACTION_SENDTO, sms_uri);
-                startActivity(sms_intent);
-            }
-        });
+//        editButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                if (mayRequestContacts()) {
+//                    editContact(phone_no, c_name, getActivity().getApplicationContext());
+//                }
+//            }
+//        });
+//
+//        voiceButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                Uri sms_uri = Uri.parse("smsto:"+phone_no);
+//                Intent sms_intent = new Intent(Intent.ACTION_SENDTO, sms_uri);
+//                startActivity(sms_intent);
+//            }
+//        });
 
         reminderButton.setOnClickListener(new View.OnClickListener() {
 
@@ -306,6 +331,21 @@ public class callEndDialogFragment extends BottomSheetDialogFragment {
 
     private int getCount(int count){
         return count;
+    }
+
+    private boolean mayRequestContacts() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (getActivity().checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
+            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+        } else {
+            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+        }
+        return false;
     }
 
     @Override
@@ -392,6 +432,10 @@ public class callEndDialogFragment extends BottomSheetDialogFragment {
         sendIntent.putExtra("jid", smsNumber + "@s.whatsapp.net"); //phone number without "+" prefix
         sendIntent.setPackage("com.whatsapp");
 
+        if (sendIntent.resolveActivity(ctx.getPackageManager()) == null) {
+            Toast.makeText(ctx, "Whatsapp Not avalable", Toast.LENGTH_SHORT).show();
+            return;
+        }
         ctx.startActivity(sendIntent);
     }
 
@@ -442,9 +486,9 @@ public class callEndDialogFragment extends BottomSheetDialogFragment {
     }
 
     @Override
-    public void onCancel(DialogInterface dialog)
+    public void onCancel(@NonNull DialogInterface dialog)
     {
         super.onCancel(dialog);
-        getActivity().finish();
+        Objects.requireNonNull(getActivity()).finish();
     }
 }

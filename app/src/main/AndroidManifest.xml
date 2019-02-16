@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.luncher.bounjour.ringlerr">
 
+    <permission
+        android:name="in.wptrafficanalyzer.multipleproximitymapv2.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -13,7 +19,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -26,47 +31,62 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
 
-    <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
-        android:resource="@drawable/ic_stat_onesignal_default" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-feature android:name="android.hardware.location.gps" />
 
     <application
-        android:name="com.luncher.bounjour.ringlerr.activity.MyDexApplication"
+        android:name=".activity.MyDexApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:logo="@drawable/disc_jockey"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:largeHeap="true"
         android:theme="@style/AppTheme.NoActionBar"
-        tools:replace="allowBackup"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="allowBackup">
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.OnboardingWithCenterAnimationActivity"
+            android:name=".activity.OnboardingWithCenterAnimationActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
-        <activity android:name="com.luncher.bounjour.ringlerr.MainActivity"
-                  android:windowSoftInputMode="stateHidden">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.DIAL" />
                 <action android:name="android.intent.action.CALL_BUTTON" />
 
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             </intent-filter>
         </activity>
         <activity
-            android:name="com.luncher.bounjour.ringlerr.MyCustomDialog"
+            android:name=".MyCustomDialog"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:showOnLockScreen="true"
             android:taskAffinity=""
+            android:screenOrientation="behind"
             android:theme="@style/AppDialogTheme">
 
             <!--
@@ -83,70 +103,114 @@
 
         </activity>
         <activity
-            android:name="com.luncher.bounjour.ringlerr.MyOutgoingCustomDialog"
+            android:name=".activity.MySosCustomDialog"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
+            android:showOnLockScreen="true"
+            android:taskAffinity=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppDialogTheme"></activity>
+        <activity
+            android:name=".MyOutgoingCustomDialog"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind"
             android:taskAffinity=""
             android:theme="@style/AppDialogTheme" />
-
         <activity
-            android:name="com.luncher.bounjour.ringlerr.VoiceOutgoingCustomDialog"
+            android:name=".VoiceOutgoingCustomDialog"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
-            android:theme="@style/AppDialogTheme" />
-
+            android:theme="@style/AppTheme" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.SchedulerList"
+            android:name=".activity.SchedulerList"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity"
             android:taskAffinity=""
-            android:theme="@style/AppTheme"
-            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity"/>
-
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
-
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.DialpadActivity"
+            android:name=".activity.DialpadActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:taskAffinity=""
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar">
 
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.SchedulerDialog"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/AppTheme" />
-
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.SchedulerEditDialog"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/AppTheme" />
-
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.callEndDialog"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppDialogTheme" />
-
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.FullScreenHolder"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/AppDialogTheme" />
-
-        <receiver android:name="com.luncher.bounjour.ringlerr.CallReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.DIAL"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="tel"/>
             </intent-filter>
             <intent-filter>
+                <action android:name="android.intent.action.DIAL"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.SchedulerDialog"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:label="Scheduler"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.SosSettings"
+            android:screenOrientation="behind"
+            android:label="SOS Settings"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.SchedulerEditDialog"
+            android:screenOrientation="behind"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.callEndDialog"
+            android:screenOrientation="behind"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppDialogTheme" />
+        <activity
+            android:name=".activity.SosActivity"
+            android:configChanges="orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".activity.FullScreenHolder"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".activity.FullScreenVideoHolder"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver android:name=".CallReceiver">
+            <intent-filter  android:priority="99999">
+                <action android:name="android.intent.action.ANSWER" />
+                <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
@@ -164,7 +228,7 @@
         </receiver>
         -->
         <receiver
-            android:name="com.luncher.bounjour.ringlerr.BootBroadcastReceiver"
+            android:name=".BootBroadcastReceiver"
             android:label="BootBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -172,176 +236,281 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+        <receiver android:name=".OnUpgradeReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" android:path="com.luncher.bounjour.ringlerr" />
+            </intent-filter>
+        </receiver>
 
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ReminderDetail"
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity
+            android:name=".activity.ReminderDetail"
             android:label="Reminder List"
-            android:theme="@style/AppTheme"
-            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity"/>
-
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.LoginActivity"
+            android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ReminderList"
+            android:name=".activity.EnregistrementVideoStackActivity"
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".activity.ReminderList"
             android:label="Reminder List"
-            android:theme="@style/AppTheme"
-            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity"/>
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.PendingReminderList"
+            android:name=".activity.PendingReminderList"
             android:label="Pending List"
-            android:theme="@style/AppTheme"
-            android:parentActivityName="com.luncher.bounjour.ringlerr.activity.ReminderList"/>
+            android:parentActivityName=".activity.ReminderList"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.AboutActivity"
+            android:name=".activity.AboutActivity"
             android:label="About Ringlerr"
-            android:theme="@style/AppTheme"
-            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity"/>
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.MySettings"
-            android:label="Setting"
-            android:theme="@style/AppTheme"
-            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.BlockList"
-            android:label="Block List"
-            android:theme="@style/AppTheme"
-            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ChatList"
-            android:label="Chat List"
-            android:theme="@style/AppTheme"
-            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.GridActivity"
-            android:exported="true" />
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.SearchContact"
-            android:exported="true" />
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.ThemeActivity"
-            android:exported="true" />
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.StickerActivity"
-            android:exported="true" />
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.photoEditor"
-            android:exported="true" />
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ProfileSetting"
-            android:exported="true" />
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.SelectContact"
-            android:exported="true" />
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.addContact"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/AppTheme"
-            android:exported="true"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.editContact"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/AppTheme"
-            android:exported="true"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.SmsActivity"
-            android:theme="@style/Theme.AppCompat.Light"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ReminderDialog"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/AppDialogTheme"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ReminderDialogGroup"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/AppDialogTheme"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ReminderSelfDialog"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/AppDialogTheme"/>
-        <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.SelectReminderContact"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
+            android:name=".activity.NotificationActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="Notifications"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ReminderEditDialog"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/AppDialogTheme"/>
+            android:name=".activity.MySettings"
+            android:label="Settings"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.ReminderAlarmDialog"
+            android:name=".activity.BlockList"
+            android:label="Block List"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.ChatList"
+            android:label="Chat List"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".GridActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.SnapActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.SearchContact"
+            android:exported="true" />
+        <activity
+            android:name=".ThemeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".StickerActivity"
+            android:exported="true" />
+        <activity
+            android:name=".photoEditor"
+            android:exported="true" />
+        <activity
+            android:name=".activity.ProfileSetting"
+            android:exported="true" />
+        <activity
+            android:name=".SelectContact"
+            android:exported="true" />
+        <activity
+            android:name=".activity.addContact"
+            android:exported="true"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.editContact"
+            android:exported="true"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.ReminderDialog"
             android:excludeFromRecents="true"
-            android:showOnLockScreen="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
-            android:theme="@style/AppDialogTheme"/>
+            android:theme="@style/AppDialogTheme" />
+        <activity
+            android:name=".activity.ReminderDialogGroup"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppDialogTheme" />
+        <activity
+            android:name=".activity.ReminderSelfDialog"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppDialogTheme" />
+        <activity
+            android:name=".activity.SelectReminderContact"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.SelectReminderGroupContact"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.SelectSosContact"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.SelectCopyContact"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activity.ReminderEditDialog"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/AppDialogTheme" />
+        <activity
+            android:name=".activity.ReminderAlarmDialog"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:showOnLockScreen="true"
+            android:taskAffinity=""
+            android:theme="@style/AppDialogTheme" />
 
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.SchedulerAlarmDialog"
+            android:name=".activity.ReminderAlarmDialogSnooz"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:showOnLockScreen="true"
+            android:taskAffinity=""
+            android:theme="@style/AppDialogTheme" />
+        <activity
+            android:name=".activity.SchedulerAlarmDialog"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
-            android:theme="@style/AppDialogTheme"/>
+            android:theme="@style/AppDialogTheme" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.WelcomeActivity"
+            android:name=".WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_welcome"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name="com.luncher.bounjour.ringlerr.activity.IntroScreen"
+            android:name=".activity.IntroScreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_welcome"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name="com.luncher.bounjour.ringlerr.OtpActivity" />
+        <activity
+            android:name=".activity.GuideScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_welcome"
+            android:theme="@style/FullscreenTheme" />
+        <activity android:name=".OtpActivity" />
+        <activity
+            android:name=".activity.CouponWeb"
+            android:label="Redeem" />
+        <activity
+            android:name=".activity.AddGroup"
+            android:label="Add Group" />
 
         <service
-            android:name="com.luncher.bounjour.ringlerr.MessageService"
+            android:name=".MessageService"
             android:enabled="true"
             android:exported="true" />
-        <!--<service-->
-            <!--android:name=".RestartService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true" />-->
-        <service android:name="com.luncher.bounjour.ringlerr.ContactBoundService" />
-        <service android:name="com.luncher.bounjour.ringlerr.services.ContactBoundServiceExt" />
-        <service android:name="com.luncher.bounjour.ringlerr.services.FrequentService" />
-        <service android:name="com.luncher.bounjour.ringlerr.services.RecentService" />
-
-        <service android:name="com.luncher.bounjour.ringlerr.services.SchedularNotificationAlarmService"
-            android:enabled="true" />
-
+        <!-- <service -->
+        <!-- android:name=".RestartService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true" /> -->
+        <service android:name=".ContactBoundService" />
+        <service android:name=".services.ContactBoundServiceExt" />
+        <service android:name=".services.FrequentService" />
+        <service android:name=".services.RecentService" />
+        <service android:name=".services.TrackingService" />
         <service
-            android:name=".services.MyFirebaseInstanceIDService">
+            android:name=".services.SchedularNotificationAlarmService"
+            android:enabled="true" />
+        <service android:name=".services.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver android:name="com.luncher.bounjour.ringlerr.services.MyReminderNotificationReceiver"/>
+
+        <receiver android:name=".services.MyReminderNotificationReceiver" />
 
         <activity
-            android:name="com.luncher.bounjour.ringlerr.AnimationActivity"
+            android:name=".AnimationActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDIhsP9MJpeKFcMEtwBqrawxydlQdwE12c" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_onesignal_default" />
+
+        <activity
+            android:name=".activity.MapsActivity"
+            android:screenOrientation="portrait"
+            android:label="Maps">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.luncher.bounjour.ringlerr.activity.MySosCustomDialog" />
+        </activity>
+
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.luncher.bounjour.ringlerr.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".activity.CouponsActivity"
+            android:screenOrientation="portrait"
+            android:label="Coupons"
+            android:parentActivityName="com.luncher.bounjour.ringlerr.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.luncher.bounjour.ringlerr.MainActivity" />
+        </activity>
+
+        <!-- Needed for Android >= Nougat for file access -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.luncher.bounjour.ringlerr.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
+        <service
+            android:name="com.luncher.bounjour.ringlerr.services.CallService"
+            android:permission="android.permission.BIND_INCALL_SERVICE">
+            <meta-data
+                android:name="android.telecom.IN_CALL_SERVICE_UI"
+                android:value="false" />
+            <intent-filter>
+                <action android:name="android.telecom.InCallService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

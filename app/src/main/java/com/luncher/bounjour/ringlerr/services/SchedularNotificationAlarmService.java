@@ -119,6 +119,8 @@ public class SchedularNotificationAlarmService extends Service {
         notificationIntent.putExtra("formattedDate", formattedDate);
         notificationIntent.putExtra("timestamp", time_and_date);
         notificationIntent.putExtra("shared_with", shared_with);
+        notificationIntent.putExtra("reminderkey", "null");
+        notificationIntent.putExtra("backpress", 1);
         //notificationIntent.setAction(Intent.ACTION_MAIN);
         //notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK );

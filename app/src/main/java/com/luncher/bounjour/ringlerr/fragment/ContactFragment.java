@@ -1,6 +1,7 @@
 package com.luncher.bounjour.ringlerr.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,12 @@ import android.widget.EditText;
 import com.github.tamir7.contacts.Contact;
 import com.github.tamir7.contacts.Contacts;
 import com.github.tamir7.contacts.Query;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.luncher.bounjour.ringlerr.MyAdapter;
 import com.luncher.bounjour.ringlerr.R;
+import com.luncher.bounjour.ringlerr.activity.AddGroup;
+import com.luncher.bounjour.ringlerr.activity.CouponWeb;
+import com.luncher.bounjour.ringlerr.activity.CouponsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +50,19 @@ public class ContactFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_contact, container, false);
+
+        FloatingActionButton fab = v.findViewById(R.id.fab_bar);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Intent intent = new Intent(getActivity(), AddGroup.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                //intent.putExtra("phone_no", "null");
+                startActivity(intent);
+            }
+        });
+
         return v;
     }
 

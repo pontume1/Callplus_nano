@@ -18,12 +18,23 @@
             android:layout_height="45dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
+            <ImageButton
+                android:id="@+id/sos_button"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/sos" />
+
             <ImageView
                 android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginRight="25dp"
+                android:layout_marginRight="45dp"
                 android:src="@drawable/logo_main" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -90,8 +101,78 @@
 
     <include
         layout="@layout/content_nav"
-        android:layout_height="379dp"
+        android:layout_height="369dp"
         tools:ignore="IncludeLayoutParam" />
+
+    <RelativeLayout
+        android:id="@+id/grant_permission_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/design_default_color_background"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="182dp"
+            android:gravity="center_horizontal"
+            android:text="Ringlerr needs the following permissions."
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="210dp"
+            android:layout_marginEnd="0dp"
+            android:paddingLeft="10dp"
+            android:text="1) Storage: To send and receive images while calling"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="240dp"
+            android:layout_marginEnd="0dp"
+            android:paddingLeft="10dp"
+            android:text="2) Contacts: To sync and connect with Ringlerr users"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="270dp"
+            android:layout_marginEnd="0dp"
+            android:paddingLeft="10dp"
+            android:text="3) Call: To make Ringlerr calls to your contacts"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/grant_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="316dp"
+            android:text="GRANT PERMISSION" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -112,25 +193,56 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/you" /-->
 
-        <ImageButton
-            android:id="@+id/schedularButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/fui_transparent"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_add_alert_white_24dp" />
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/keyboard"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
+            <ImageButton
+                android:id="@+id/schedularButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical|center"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_add_alert_white_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Scheduler"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/fui_transparent"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/combined_shape" />
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/keyboard"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical|center"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/combined_shape" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Dial Pad"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
         <!--ImageButton
             android:id="@+id/gifButton"
@@ -142,15 +254,58 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/layer_4" /-->
 
-        <ImageButton
-            android:id="@+id/reminderButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/fui_transparent"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/reminder_white_24dp" />
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/reminderButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical|center"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/reminder_white_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Reminder"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/sosSettingsButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical|center"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_settings_applications_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Sos Settings"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

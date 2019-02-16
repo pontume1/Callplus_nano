@@ -3,44 +3,40 @@ package com.luncher.bounjour.ringlerr.fragment;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.CallLog;
-import android.provider.ContactsContract;
+import android.telecom.TelecomManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
-import com.luncher.bounjour.ringlerr.ContactBoundService;
 import com.luncher.bounjour.ringlerr.MyRecentAdapter;
 import com.luncher.bounjour.ringlerr.R;
 import com.luncher.bounjour.ringlerr.SessionManager;
-import com.luncher.bounjour.ringlerr.model.MyContact;
 import com.luncher.bounjour.ringlerr.services.RecentService;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static android.content.Context.TELECOM_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,31 +45,14 @@ public class RecentFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
     public EditText search;
     private Animation animationUp, animationDown;
-    public static boolean isRecursionEnable = false;
-    ContactBoundService myService;
-    RecentService recentService;
-    boolean isBound = false;
-    Activity mActivity;
-    View myView;
-
+    private boolean isBound = false;
+    private Activity mActivity;
     private CallbackReciver callbackReciver;
-    MyContentObserver observer;
-
-    List<MyContact> list = new ArrayList<>();
-
-    String[] projection = new String[] {
-            CallLog.Calls.CACHED_NAME,
-            CallLog.Calls.NUMBER,
-            CallLog.Calls.TYPE,
-            CallLog.Calls.DATE,
-            CallLog.Calls._ID
-    };
-
-    String sortOrder = String.format("%s limit 450 ", android.provider.CallLog.Calls.DATE + " DESC");
-    //String sortOrder = android.provider.CallLog.Calls.DATE + " DESC";
+    private MyContentObserver observer;
+    private RelativeLayout default_app;
+    public static final int REQUEST_CODE_SET_DEFAULT_DIALER = 22;
 
     public RecentFragment() {
         // Required empty public constructor
@@ -81,28 +60,40 @@ public class RecentFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_recent, container, false);
 
-        return v;
+        return inflater.inflate(R.layout.fragment_recent, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        myView = view;
-        recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        View myView = view;
+        recyclerView = view.findViewById(R.id.my_recycler_view);
         // use this setting to
         // improve performance if you know that changes
         // in content do not change the layout size
         // of the RecyclerView
         recyclerView.setHasFixedSize(true);
         // use a linear layout manager
-        layoutManager = new LinearLayoutManager(mActivity);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mActivity);
         recyclerView.setLayoutManager(layoutManager);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            default_app = view.findViewById(R.id.default_app);
+            if (!isAlreadyDefaultDialer()) {
+                default_app.setVisibility(View.VISIBLE);
+                default_app.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checkDefaultHandler();
+                    }
+                });
+            }
+        }
 
         List<String> input = new ArrayList<>();
         List<String> phone_no = new ArrayList<>();
@@ -170,7 +161,7 @@ public class RecentFragment extends Fragment {
         mAdapter = new MyRecentAdapter(input, phone_no, types, ago, user_image, contact_id, c_id, animationUp, animationDown);
         recyclerView.setAdapter(mAdapter);
 
-        if(isBound == false) {
+        if(!isBound) {
             startCashbackService(view);
         }
         registerCashbackReceiver();
@@ -185,7 +176,7 @@ public class RecentFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof Activity){
             mActivity = (Activity) context;
@@ -198,11 +189,11 @@ public class RecentFragment extends Fragment {
         super.onResume();
         //runInBackground();
 
-        if(isBound == true) {
+//        if(!isBound) {
 //            list.clear();
 //            myService.updateContact();
 //            updateContact();
-        }
+//        }
     }
 
     @Override
@@ -217,7 +208,39 @@ public class RecentFragment extends Fragment {
         mActivity = null;
     }
 
-    public void startCashbackService(View view){
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void checkDefaultHandler() {
+        if (isAlreadyDefaultDialer()) {
+            return;
+        }
+        Intent intent = new Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER);
+        intent.putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, getActivity().getPackageName());
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_CODE_SET_DEFAULT_DIALER);
+        }
+        else{
+            throw new RuntimeException("Default phone functionality not found");
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CODE_SET_DEFAULT_DIALER) {
+                default_app.setVisibility(View.GONE);
+            }
+        }
+    };
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean isAlreadyDefaultDialer() {
+        TelecomManager telecomManager = (TelecomManager) getActivity().getSystemService(TELECOM_SERVICE);
+        return getActivity().getPackageName().equals(telecomManager.getDefaultDialerPackage());
+    }
+
+    private void startCashbackService(View view){
         isBound = true;
         Intent cbIntent =  new Intent();
         cbIntent.setClass(mActivity, RecentService.class);
@@ -258,49 +281,49 @@ public class RecentFragment extends Fragment {
         }
     }
 
-    public Bitmap openPhoto(long contactId) {
-        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
-        Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-        Cursor cursor = getContext().getContentResolver().query(photoUri,
-                new String[] {ContactsContract.Contacts.Photo.PHOTO}, null, null, null);
-        if (cursor == null) {
-            return null;
-        }
-        try {
-            if (cursor.moveToFirst()) {
-                byte[] data = cursor.getBlob(0);
-                if (data != null) {
-                    return BitmapFactory.decodeStream(new ByteArrayInputStream(data));
-                }
-            }
-        } finally {
-            cursor.close();
-        }
-        return null;
+//    public Bitmap openPhoto(long contactId) {
+//        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
+//        Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+//        Cursor cursor = getContext().getContentResolver().query(photoUri,
+//                new String[] {ContactsContract.Contacts.Photo.PHOTO}, null, null, null);
+//        if (cursor == null) {
+//            return null;
+//        }
+//        try {
+//            if (cursor.moveToFirst()) {
+//                byte[] data = cursor.getBlob(0);
+//                if (data != null) {
+//                    return BitmapFactory.decodeStream(new ByteArrayInputStream(data));
+//                }
+//            }
+//        } finally {
+//            cursor.close();
+//        }
+//        return null;
+//
+//    }
 
-    }
-
-    public int getContactIDFromNumber(String contactNumber)
-    {
-        int phoneContactID = new Random().nextInt();
-        if(contactNumber == null || contactNumber.equals("")){
-            phoneContactID = -1;
-        }else {
-            contactNumber = Uri.encode(contactNumber);
-            Cursor contactLookupCursor = getContext().getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, contactNumber), new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID}, null, null, null);
-            while (contactLookupCursor.moveToNext()) {
-                phoneContactID = contactLookupCursor.getInt(contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID));
-            }
-            contactLookupCursor.close();
-        }
-
-        return phoneContactID;
-    }
+//    public int getContactIDFromNumber(String contactNumber)
+//    {
+//        int phoneContactID = new Random().nextInt();
+//        if(contactNumber == null || contactNumber.equals("")){
+//            phoneContactID = -1;
+//        }else {
+//            contactNumber = Uri.encode(contactNumber);
+//            Cursor contactLookupCursor = getContext().getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, contactNumber), new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID}, null, null, null);
+//            while (contactLookupCursor.moveToNext()) {
+//                phoneContactID = contactLookupCursor.getInt(contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID));
+//            }
+//            contactLookupCursor.close();
+//        }
+//
+//        return phoneContactID;
+//    }
 
     class MyContentObserver extends ContentObserver {
 
         public View view;
-        public MyContentObserver(Handler h, View view) {
+        MyContentObserver(Handler h, View view) {
             super(h);
             this.view = view;
         }
@@ -316,7 +339,7 @@ public class RecentFragment extends Fragment {
             SessionManager session = new SessionManager(mActivity);
             session.setFrequentContacts(null);
             // here you call the method to fill the list
-            if(isBound == false) {
+            if(!isBound) {
                 startCashbackService(view);
             }
         }

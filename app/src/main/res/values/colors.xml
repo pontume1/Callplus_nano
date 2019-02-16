@@ -28,16 +28,37 @@
     <color name="yellow_color_picker">#FBE870</color>
     <color name="yellow_green_color_picker">#C5E17A</color>
 
+    <color name="blueGray200">#B0BEC5</color>
+    <color name="grayText">#a9a9a9</color>
+    <color name="blueGray300">#90A4AE</color>
+    <color name="blueGray400">#78909C</color>
+    <color name="blueGray50">#ECEFF1</color>
+    <color name="blueGray500">#607D8B</color>
+    <color name="cyan900">#006064</color>
+    <color name="default_left_bubble_color">@color/button_material_light</color>
+    <color name="default_right_bubble_color">@color/green500</color>
+    <color name="gray200">#EEEEEE</color>
+    <color name="gray300">#E0E0E0</color>
+    <color name="green500">#4CAF50</color>
+    <color name="lightBlue500">#03A9F4</color>
+    <color name="red500">#F44336</color>
+    <color name="teal100">#B2DFDB</color>
+    <color name="teal500">#009688</color>
+
     <color name="color1">#f50057</color>
     <color name="color2">#e9045a</color>
     <color name="color3">#dd085d</color>
     <color name="color4">#d10e61</color>
+    <color name="color5">#d10e61</color>
 
     <array name="dot_on_page_active">
         <item>#B71C1C</item>
         <item>#8BC34A</item>
         <item>#4A148C</item>
         <item>#CCFF90</item>
+        <item>#8BC34A</item>
+        <item>#B71C1C</item>
+        <item>#8BC34A</item>
     </array>
 
     <array name="dot_on_page_not_active">
@@ -45,5 +66,8 @@
         <item>#CCFF90</item>
         <item>#E040FB</item>
         <item>#8BC34A</item>
+        <item>#CCFF90</item>
+        <item>#FF5252</item>
+        <item>#CCFF90</item>
     </array>
 </resources>

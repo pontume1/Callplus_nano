@@ -29,7 +29,7 @@ public class OtpActivity extends AppCompatActivity {
                 View focusView = null;
                 enter_otp.setError(null);
                 if(isVer){
-                    myDbHelper = new MyDbHelper(OtpActivity.this, null, null, 1);
+                    myDbHelper = new MyDbHelper(OtpActivity.this, null, 1);
                     myDbHelper.updateOtp();
                     goto_main();
                 }else{

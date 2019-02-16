@@ -5,8 +5,11 @@ package com.luncher.bounjour.ringlerr;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -42,12 +46,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.luncher.bounjour.ringlerr.model.Blocks;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 
@@ -67,21 +74,33 @@ public class MyCustomDialog extends Activity
     String image;
     String type;
     String talk_time;
-    String result;
+    String mName;
     Button dialog_ok;
+    Button dialog_revert;
     private DatabaseReference mRootRef;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     public static Activity fa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.setFinishOnTouchOutside(false);
         super.onCreate(savedInstanceState);
         fa = this;
         try {
 
-//            requestWindowFeature(Window.FEATURE_NO_TITLE);
-//            this.setFinishOnTouchOutside(false);
-            setContentView(R.layout.dialog);
+
+            phone_no = getIntent().getExtras().getString("phone_no");
+            message = getIntent().getExtras().getString("message");
+            image = getIntent().getExtras().getString("image");
+            type = getIntent().getExtras().getString("type");
+            talk_time = getIntent().getExtras().getString("talk_time");
+
+            if(type.equals("flash")) {
+                setContentView(R.layout.dialog_flash);
+            }else {
+                setContentView(R.layout.dialog);
+            }
 
             this.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
             //this.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
@@ -105,12 +124,6 @@ public class MyCustomDialog extends Activity
             params.y = -50;
 
             this.getWindow().setAttributes(params);*/
-
-            phone_no = getIntent().getExtras().getString("phone_no");
-            message = getIntent().getExtras().getString("message");
-            image = getIntent().getExtras().getString("image");
-            type = getIntent().getExtras().getString("type");
-            talk_time = getIntent().getExtras().getString("talk_time");
 
             msg_view.setVisibility(View.VISIBLE);
             if(message.equals("")){
@@ -148,8 +161,15 @@ public class MyCustomDialog extends Activity
 
             }
 
-//            ViewDialog alert = new ViewDialog();
-//            alert.showDialog(MyCustomDialog.this, message);
+            Button dialog_block   = findViewById(R.id.dialog_block);
+            dialog_block.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    blockNo(phone_no);
+                }
+            });
 
             r_image.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -170,7 +190,28 @@ public class MyCustomDialog extends Activity
                 public void onClick(View v)
                 {
                     MyCustomDialog.this.finish();
-                    System.exit(0);
+                }
+            });
+
+            dialog_revert.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    final Intent intent1 = new Intent(MyCustomDialog.this, MyOutgoingCustomDialog.class);
+                    intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent1.putExtra("phone_no", phone_no);
+                    intent1.putExtra("sim", 1);
+                    intent1.putExtra("name", mName);
+                    //context.startActivity(intent1);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(intent1);
+                        }
+                    }, 100);
+                    finish();
                 }
             });
 
@@ -178,6 +219,70 @@ public class MyCustomDialog extends Activity
             Log.d("Exception", e.toString());
             e.printStackTrace();
         }
+    }
+
+    private void blockNo(final String phone) {
+        new AlertDialog.Builder(MyCustomDialog.this)
+                .setTitle("Block")
+                .setMessage("Are you sure you want to block "+phone+" ?")
+                .setNegativeButton(android.R.string.cancel, null) // dismisses by default
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        Long tsLong = System.currentTimeMillis()/1000;
+
+                        MyDbHelper myDbHelper;
+                        myDbHelper = new MyDbHelper(MyCustomDialog.this, null, 1);
+                        String bnumber = myDbHelper.checkBlockNumber(phone);
+                        if(!bnumber.equals("null")){
+                            Toast.makeText(MyCustomDialog.this, mName+" is already in your block list", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        final DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+                        SessionManager session = new SessionManager(MyCustomDialog.this);
+                        // get user data from session
+                        HashMap<String, String> user = session.getUserDetails();
+                        // phone
+                        String mPhoneNo = user.get(SessionManager.KEY_PHONE);
+
+                        String key = mRootRef.child("blocks").child(mPhoneNo).push().getKey();
+                        Blocks blocks = new Blocks(mPhoneNo, phone, mName, tsLong.toString());
+                        Map<String, Object> postValues = blocks.toMap();
+
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        childUpdates.put("/blocks/" + mPhoneNo + "/" + key, postValues);
+
+                        mRootRef.updateChildren(childUpdates);
+
+                        DatabaseReference blockrootRef = mRootRef.child("block_count/"+ phone +"/count");
+                        blockrootRef.addListenerForSingleValueEvent(
+                                new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Object count = dataSnapshot.getValue();
+                                        String bl_count = "0";
+                                        if(count!=null){
+                                            bl_count = count.toString();
+                                        }
+                                        int block_count = getCount(Integer.parseInt(bl_count));
+                                        int total_block = block_count+1;
+                                        mRootRef.child("block_count").child(phone).child("count").setValue(total_block);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                        myDbHelper.addBlockNumber(phone);
+
+                        Toast.makeText(MyCustomDialog.this, mName+" added to your block list", Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .create()
+                .show();
     }
 
     @Override
@@ -190,6 +295,7 @@ public class MyCustomDialog extends Activity
                 mRootRef = FirebaseDatabase.getInstance().getReference();
                 String name = getContactName(getApplicationContext(), phone_no);
                 if(name != null){
+                    mName = name;
                     sender_name.setText(name);
                 }else{
                     DatabaseReference rootRef = mRootRef.child("identity/"+ phone_no +"/name");
@@ -202,7 +308,7 @@ public class MyCustomDialog extends Activity
                                 if(count!=null){
                                     name = count.toString();
                                 }
-
+                                mName = name;
                                 sender_name.setText(name);
 
                             }
@@ -344,16 +450,17 @@ public class MyCustomDialog extends Activity
 
     private void initializeContent()
     {
-        tv_client   = (TextView) findViewById(R.id.tv_client);
-        sender   = (TextView) findViewById(R.id.sender);
-        sender_name   = (TextView) findViewById(R.id.name);
-        talk_time_view   = (TextView) findViewById(R.id.talk_time_view);
-        block   = (TextView) findViewById(R.id.block);
-        report   = (TextView) findViewById(R.id.report);
-        dialog_ok   = (Button) findViewById(R.id.dialog_ok);
-        r_image = (ImageView) findViewById(R.id.r_image);
-        profile_image = (ImageView) findViewById(R.id.profile_image);
-        msg_view = (LinearLayout) findViewById(R.id.msg_view);
+        tv_client   = findViewById(R.id.tv_client);
+        sender   = findViewById(R.id.sender);
+        sender_name   = findViewById(R.id.name);
+        talk_time_view   = findViewById(R.id.talk_time_view);
+        block   = findViewById(R.id.block);
+        report   = findViewById(R.id.report);
+        dialog_ok   = findViewById(R.id.dialog_ok);
+        dialog_revert   = findViewById(R.id.dialog_revert);
+        r_image = findViewById(R.id.r_image);
+        profile_image = findViewById(R.id.profile_image);
+        msg_view = findViewById(R.id.msg_view);
     }
 
     public static String getContactName(Context context, String phoneNumber) {

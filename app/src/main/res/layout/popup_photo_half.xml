@@ -5,8 +5,6 @@
     android:id="@+id/rl_custom_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="150dp"
-    android:layout_marginTop="100dp"
     android:background="@android:color/black">
 
 
@@ -39,22 +37,24 @@
         android:id="@+id/thumbUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="39dp"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/flag_transparent"
+        android:visibility="gone"
         app:srcCompat="@drawable/thumb_up_white_24dp" />
 
     <ImageButton
         android:id="@+id/thumbDownButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="35dp"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/flag_transparent"
+        android:visibility="gone"
         app:srcCompat="@drawable/thumb_down_white_24dp" />
 
     <Button

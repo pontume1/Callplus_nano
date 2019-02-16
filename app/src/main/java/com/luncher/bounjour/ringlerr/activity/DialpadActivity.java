@@ -1,26 +1,32 @@
 package com.luncher.bounjour.ringlerr.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.luncher.bounjour.ringlerr.MyOutgoingCustomDialog;
 import com.luncher.bounjour.ringlerr.R;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+
+import static android.Manifest.permission.READ_CALL_LOG;
 
 public class DialpadActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private ViewHolder mViewHolder;
+    private static final int REQUEST_READ_CALL_LOG = 452;
 
     public DialpadActivity(){
 
@@ -31,7 +37,48 @@ public class DialpadActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.dialpad);
+
         mViewHolder = new ViewHolder();
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_VIEW.equals(action)) {
+            handleSendText(intent); // Handle text being sent
+        }
+
+        ImageView add_to_contact = findViewById(R.id.add_to_contact);
+
+        add_to_contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mViewHolder.phoneNumber.getText().length() == 0) {
+                    Toast.makeText(DialpadActivity.this, "Please enter a phone number", Toast.LENGTH_SHORT).show();
+                }else {
+                    String phone = mViewHolder.phoneNumber.getText().toString();
+                    openContact(phone, DialpadActivity.this);
+                }
+            }
+        });
+
+        mViewHolder.buttonDelete.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                mViewHolder.phoneNumber.setText("");
+                return false;
+            }
+        });
+    }
+
+    void handleSendText(Intent intent) {
+        String sharedText = intent.getData().toString();
+        if (sharedText != null) {
+            sharedText = sharedText.replace("tel:", "");
+            mViewHolder.phoneNumber.setText(sharedText);
+        }
     }
 
     //keyboard
@@ -58,6 +105,12 @@ public class DialpadActivity extends AppCompatActivity implements View.OnClickLi
         animate.setDuration(500);
         animate.setFillAfter(true);
         view.startAnimation(animate);
+    }
+
+    private void openContact(String phone, Context ctx) {
+        Intent addIntent = new Intent(ctx, addContact.class);
+        addIntent.putExtra("phone", phone);
+        ctx.startActivity(addIntent);
     }
 
     public void onClick(View v) {
@@ -166,6 +219,7 @@ public class DialpadActivity extends AppCompatActivity implements View.OnClickLi
         mViewHolder.phoneNumber.setSelection(start + 1);
     }
 
+    @SuppressLint("MissingPermission")
     private void callNumberAndFinish(CharSequence number) {
         if (number == null || number.length() == 0) {
             Toast.makeText(this, "No Phone Number", Toast.LENGTH_SHORT).show();
@@ -173,7 +227,7 @@ public class DialpadActivity extends AppCompatActivity implements View.OnClickLi
         }
 
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+        if (mayRequestManageCall()) {
             Intent callIntent = new Intent(Intent.ACTION_CALL);
             callIntent.setData(Uri.parse("tel:" + number.toString()));
             int simSlot = 1; //getDefaultSimSlot(context);
@@ -181,7 +235,6 @@ public class DialpadActivity extends AppCompatActivity implements View.OnClickLi
             callIntent.putExtra("com.android.phone.extra.slot", simSlot);
             startActivity(callIntent);
         }
-
     }
 
     public void callWithRinglerr(CharSequence phone){
@@ -191,19 +244,36 @@ public class DialpadActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
 
-        final Intent intent1 = new Intent(DialpadActivity.this, MyOutgoingCustomDialog.class);
-        intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent1.putExtra("phone_no", phone.toString());
-        intent1.putExtra("sim", 1);
-        intent1.putExtra("name", "");
-        //context.startActivity(intent1);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(intent1);
-            }
-        }, 100);
+        if (mayRequestManageCall()) {
+            final Intent intent1 = new Intent(DialpadActivity.this, MyOutgoingCustomDialog.class);
+            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent1.putExtra("phone_no", phone.toString());
+            intent1.putExtra("sim", 1);
+            intent1.putExtra("name", "");
+            //context.startActivity(intent1);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(intent1);
+                }
+            }, 100);
+        }
+    }
+
+    private boolean mayRequestManageCall() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (checkSelfPermission(READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        if (shouldShowRequestPermissionRationale(READ_CALL_LOG)) {
+            requestPermissions(new String[]{READ_CALL_LOG}, REQUEST_READ_CALL_LOG);
+        } else {
+            requestPermissions(new String[]{READ_CALL_LOG}, REQUEST_READ_CALL_LOG);
+        }
+        return false;
     }
 
     @Override

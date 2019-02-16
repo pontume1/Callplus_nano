@@ -43,6 +43,10 @@ public class Blocks {
         return datetime;
     }
 
+    public void setBlock_no(String block_no) {
+        this.block_no = block_no;
+    }
+
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();

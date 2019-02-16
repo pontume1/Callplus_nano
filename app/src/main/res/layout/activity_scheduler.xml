@@ -25,15 +25,17 @@
                 android:layout_height="40dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/my_profile"/>
+
             <TextView
                 android:id="@+id/scheduler_person_text"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/scheduler_person_image"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/scheduler_person_image"
+                android:paddingBottom="10dp"
                 android:text="CHOOSE CONTACT"
-                android:textSize="15dp"/>
+                android:textSize="15dp" />
             <ImageView
                 android:id="@+id/scheduler_date_image"
                 android:layout_below="@+id/scheduler_person_image"
@@ -41,16 +43,18 @@
                 android:layout_height="40dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/calendar"/>
+
             <TextView
                 android:id="@+id/scheduler_date_text"
-                android:layout_toRightOf="@+id/scheduler_date_image"
-                android:layout_below="@+id/scheduler_person_image"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/scheduler_person_image"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/scheduler_date_image"
+                android:paddingBottom="10dp"
                 android:text="SELECT DATE"
-                android:textSize="15dp"/>
+                android:textSize="15dp" />
             <ImageView
                 android:id="@+id/shceduler_time_image"
                 android:layout_below="@+id/scheduler_date_image"
@@ -58,16 +62,18 @@
                 android:layout_height="40dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/time2"/>
+
             <TextView
                 android:id="@+id/scheduler_time_text"
-                android:layout_toRightOf="@+id/shceduler_time_image"
-                android:layout_below="@id/scheduler_date_image"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/scheduler_date_image"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/shceduler_time_image"
+                android:paddingBottom="10dp"
                 android:text="SELECT TIME"
-                android:textSize="15dp"/>
+                android:textSize="15dp" />
 
         </RelativeLayout>
 
@@ -157,7 +163,7 @@
                 android:id="@+id/scheduler_message_icon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="36dp"
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/shceduler_send_button"
                 android:background="#eee"
@@ -167,7 +173,7 @@
                 android:id="@+id/scheduler_whatsapp_icon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="45dp"
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/scheduler_message_icon"
                 android:src="@drawable/whats" />
@@ -179,7 +185,8 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/scheduler_whatsapp_icon"
-                android:src="@drawable/face" />
+                android:src="@drawable/face"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <RelativeLayout

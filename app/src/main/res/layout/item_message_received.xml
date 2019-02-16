@@ -1,57 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mail_message_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="8dp">
+    android:foreground="?attr/selectableItemBackground">
 
     <RelativeLayout
-        android:id="@+id/mail_message_layout"
-        android:layout_width="wrap_content"
+        android:id="@+id/receiveImage"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/rounded_rectangle_recive"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="8dp"
-        tools:ignore="MissingConstraints">
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/fui_bgPhone"
+        android:visibility="visible">
 
         <ImageView
-            android:id="@+id/chat_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:maxHeight="200dp"
-            android:maxWidth="200dp"
-            android:minWidth="200dp" />
+            android:id="@id/chat_image"
+            android:layout_width="220dp"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop" />
 
         <TextView
-            android:id="@+id/text_message_body"
-            android:layout_width="wrap_content"
+            android:id="@+id/text_message_body_img"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/chat_image"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
-            android:maxWidth="240dp"
-            android:padding="8dp"
-            android:text="hi man, how are you?"
-            android:textColor="#ffffff" />
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="4dp"
+            android:gravity="right"
+            android:padding="6dp"
+            android:text=""
+            android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/text_message_time"
-            android:layout_width="98dp"
+            android:id="@+id/text_message_time_img"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_message_body"
-            android:layout_marginBottom="4dp"
-            android:layout_marginStart="82dp"
+            android:layout_below="@+id/text_message_body_img"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:gravity="right"
-            android:text="11:40"
-            android:textColor="#ffffff"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
-            app:layout_constraintLeft_toRightOf="@+id/text_message_body" />
+            android:padding="6dp"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
     </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/receiveLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/leftArrow"
+            android:layout_width="15dp"
+            android:layout_height="30dp"
+            android:background="@drawable/activity24_chat_shape2"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:layout_toEndOf="@+id/leftArrow"
+            android:background="@drawable/activity24_chat_shape1"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/text_message_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-4dp"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/text_message_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="right"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</FrameLayout>

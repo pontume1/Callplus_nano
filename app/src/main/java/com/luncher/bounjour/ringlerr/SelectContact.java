@@ -37,9 +37,6 @@ public class SelectContact extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_select_contact);
 
-        image = getIntent().getExtras().getString("image");
-        type = getIntent().getExtras().getString("type");
-
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         search = (EditText) findViewById( R.id.search);
         // use this setting to

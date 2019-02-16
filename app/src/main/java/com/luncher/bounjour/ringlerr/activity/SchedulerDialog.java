@@ -4,11 +4,14 @@ package com.luncher.bounjour.ringlerr.activity;
  * Created by santanu on 11/11/17.
  */
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -17,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -87,6 +91,7 @@ public class SchedulerDialog extends AppCompatActivity {
     private PendingIntent pendingIntent;
     static final int PICK_CONTACT_REQUEST = 1;
     private int PICK_IMAGE_REQUEST = 2;
+    private int PERMISSION_REQUEST_SEND_SMS = 3;
 
     private Switch scheduler_prompt_toggle;
     private Boolean checkBoxState = false;
@@ -312,58 +317,79 @@ public class SchedulerDialog extends AppCompatActivity {
         dialog_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                message = sendMgs.getText().toString();
-                //check current state of a check box (true or false)
-                checkBoxState = scheduler_prompt_toggle.isChecked();
 
-                String is_manual = "0";
-                if(checkBoxState){
-                    is_manual = "1";
-                }else{
-                    if(!spinner_type.equals("SMS")){
-                        remindAgo = 5;
+                if(spinner_type.equals("SMS")){
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+
+                        if (checkSelfPermission(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_DENIED) {
+
+                            String[] permissions = {Manifest.permission.SEND_SMS};
+
+                            requestPermissions(permissions, PERMISSION_REQUEST_SEND_SMS);
+
+                        }else{
+                            saveSchedular();
+                        }
+                    }else{
+                        saveSchedular();
                     }
+                }else{
+                    saveSchedular();
                 }
-
-                if(remindAgo == 1){
-                    alarm_time = time - (60 * 60 * 1000);
-                }else {
-                    alarm_time = time - (remindAgo * 60 * 1000);
-                }
-
-                if(message.equals("")){
-                    Toast.makeText(SchedulerDialog.this, "Message cannot be empty", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(phone_no == null){
-                    Toast.makeText(SchedulerDialog.this, "Please Select a Contact", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                phone_no = phone_no.replace(" ", "");
-
-                MyDbHelper myDbHelper = new MyDbHelper(SchedulerDialog.this, null, null, 1);
-                long Id = myDbHelper.addSchedule(c_name, spinner_type, remindAgo+" "+remUnit, phone_no, message, time, is_manual);
-
-                alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                Intent myIntent = new Intent(SchedulerDialog.this, SchedulerAlarmDialog.class);
-                myIntent.putExtra("alarm_mgs", message);
-                myIntent.putExtra("date_time", time);
-                myIntent.putExtra("phone", phone_no);
-                myIntent.putExtra("name", c_name);
-                myIntent.putExtra("is_manual", is_manual);
-                myIntent.putExtra("spinner_type", spinner_type);
-                myIntent.putExtra("id", Id);
-                pendingIntent = PendingIntent.getActivity(SchedulerDialog.this, (int)Id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm_time, pendingIntent);
-
-                message = "";
-
-                Toast.makeText(SchedulerDialog.this, "Your message has been scheduled Successfully", Toast.LENGTH_SHORT).show();
-                finish();
             }
         });
+    }
+
+    private void saveSchedular(){
+        message = sendMgs.getText().toString();
+        //check current state of a check box (true or false)
+        checkBoxState = scheduler_prompt_toggle.isChecked();
+
+        String is_manual = "0";
+        if(checkBoxState){
+            is_manual = "1";
+            remindAgo = 5;
+        }
+
+        if(remindAgo == 1){
+            alarm_time = time - (60 * 60 * 1000);
+        }else {
+            alarm_time = time - (remindAgo * 60 * 1000);
+        }
+
+        if(message.equals("")){
+            Toast.makeText(SchedulerDialog.this, "Message cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(phone_no == null){
+            Toast.makeText(SchedulerDialog.this, "Please Select a Contact", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        phone_no = phone_no.replace(" ", "");
+
+        MyDbHelper myDbHelper = new MyDbHelper(SchedulerDialog.this, null, 1);
+        long Id = myDbHelper.addSchedule(c_name, spinner_type, remindAgo+"", phone_no, message, time, is_manual);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent myIntent = new Intent(SchedulerDialog.this, SchedulerAlarmDialog.class);
+        myIntent.putExtra("alarm_mgs", message);
+        myIntent.putExtra("date_time", time);
+        myIntent.putExtra("phone", phone_no);
+        myIntent.putExtra("name", c_name);
+        myIntent.putExtra("is_manual", is_manual);
+        myIntent.putExtra("spinner_type", spinner_type);
+        myIntent.putExtra("id", Id);
+        pendingIntent = PendingIntent.getActivity(SchedulerDialog.this, (int)Id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm_time, pendingIntent);
+
+        Long notification_time = (time/1000);
+        long notification_id = myDbHelper.addNotification(phone_no, "Scheduled "+spinner_type+" for "+c_name, notification_time.toString(), 3, "");
+
+        message = "";
+        Toast.makeText(SchedulerDialog.this, "Your message has been scheduled Successfully", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     private void selectTime() {
@@ -423,9 +449,8 @@ public class SchedulerDialog extends AppCompatActivity {
     }
 
     private void choosePhoneNo() {
-        Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
-        pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
-        startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
+        Intent intent = new Intent(this, SelectSosContact.class);
+        startActivityForResult(intent, PICK_CONTACT_REQUEST);
     }
 
     @Override
@@ -436,23 +461,8 @@ public class SchedulerDialog extends AppCompatActivity {
         if (requestCode == PICK_CONTACT_REQUEST) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                // Get the URI that points to the selected contact
-                Uri contactUri = data.getData();
-                // We only need the NUMBER column, because there will be only one row in the result
-                String[] projection = {ContactsContract.CommonDataKinds.Phone.NUMBER};
 
-                // Perform the query on the contact to get the NUMBER column
-                // We don't need a selection or sort order (there's only one result for the given URI)
-                // CAUTION: The query() method should be called from a separate thread to avoid blocking
-                // your app's UI thread. (For simplicity of the sample, this code doesn't do that.)
-                // Consider using CursorLoader to perform the query.
-                Cursor cursor = getContentResolver()
-                        .query(contactUri, projection, null, null, null);
-                cursor.moveToFirst();
-
-                // Retrieve the phone number from the NUMBER column
-                int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                phone_no = cursor.getString(column);
+                phone_no = data.getExtras().getString("POS_PHONE");
                 phone_no = "+91"+getLastnCharacters(phone_no.replace(" ", ""), 10);
                 c_name = getContactName(this, phone_no);
 
@@ -490,7 +500,11 @@ public class SchedulerDialog extends AppCompatActivity {
             }
         }
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if(requestCode == PERMISSION_REQUEST_SEND_SMS && resultCode == Activity.RESULT_OK ){
+            saveSchedular();
+        }
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             Uri uri = data.getData();
 

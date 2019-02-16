@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.luncher.bounjour.ringlerr.MyDbHelper;
 import com.luncher.bounjour.ringlerr.R;
 
 import java.util.ArrayList;
@@ -30,9 +31,17 @@ public class editContact extends AppCompatActivity {
 
     private EditText displayNameEditor;
     private EditText phoneNumberEditor;
+    private EditText emailEditor;
+    private EditText emailid;
+    private EditText company;
+    private EditText department;
+    private EditText job;
+    private EditText address;
+    private EditText website;
     private String phone;
     private String name;
     private Integer contact_id;
+    private Integer phoneContactType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +50,16 @@ public class editContact extends AppCompatActivity {
 
         setTitle("Edit Contact");
 
-        displayNameEditor = (EditText)findViewById(R.id.add_phone_contact_display_name);
+        displayNameEditor = findViewById(R.id.add_phone_contact_display_name);
 
-        phoneNumberEditor = (EditText)findViewById(R.id.add_phone_contact_number);
+        phoneNumberEditor = findViewById(R.id.add_phone_contact_number);
+        emailEditor = findViewById(R.id.add_phone_contact_display_email);
+        emailid = findViewById(R.id.add_phone_contact_display_email);
+        company = findViewById(R.id.add_phone_contact_company);
+        department = findViewById(R.id.add_phone_contact_department);
+        job = findViewById(R.id.add_phone_contact_job);
+        address = findViewById(R.id.add_phone_contact_address);
+        website = findViewById(R.id.add_phone_contact_website);
 
         phone = getIntent().getExtras().getString("phone");
         name = getIntent().getExtras().getString("name");
@@ -53,15 +69,28 @@ public class editContact extends AppCompatActivity {
         displayNameEditor.setText(name);
         phoneNumberEditor.setText(phone);
 
+        // Show Data
+        MyDbHelper myDbHelper = new MyDbHelper(editContact.this, null, 9);
+        String arrData[] = myDbHelper.SelectContactData(contact_id);
+        if(arrData[0] != null)
+        {
+            emailid.setText(arrData[3]);
+            company.setText(arrData[4]);
+            department.setText(arrData[5]);
+            job.setText(arrData[6]);
+            address.setText(arrData[7]);
+            website.setText(arrData[8]);
+        }
+
         // Initialize phone type dropdown spinner.
-        final Spinner phoneTypeSpinner = (Spinner)findViewById(R.id.add_phone_contact_type);
+        final Spinner phoneTypeSpinner = findViewById(R.id.add_phone_contact_type);
         String phoneTypeArr[] = {"Mobile", "Home", "Work"};
         ArrayAdapter<String> phoneTypeSpinnerAdaptor = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, phoneTypeArr);
         phoneTypeSpinner.setAdapter(phoneTypeSpinnerAdaptor);
 
         // Click this button to save user input phone contact info.
-        Button savePhoneContactButton = (Button) findViewById(R.id.add_phone_contact_save_button);
-        Button cancle_button = (Button)findViewById(R.id.cancle_button);
+        Button savePhoneContactButton = findViewById(R.id.add_phone_contact_save_button);
+        Button cancle_button = findViewById(R.id.cancle_button);
         savePhoneContactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,9 +100,10 @@ public class editContact extends AppCompatActivity {
                 if(contact_id > -1) {
                     phone = phoneNumberEditor.getText().toString();
                     name = displayNameEditor.getText().toString();
+                    String email = emailEditor.getText().toString();
                     String phoneTypeStr = (String)phoneTypeSpinner.getSelectedItem();
 
-                    int phoneContactType = ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE;
+                    phoneContactType = ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE;
 
                     if("home".equalsIgnoreCase(phoneTypeStr))
                     {
@@ -88,7 +118,7 @@ public class editContact extends AppCompatActivity {
                     // Update mobile phone number.
                     //updatePhoneNumber(contentResolver, contact_id, phoneContactType, phone, name);
 
-                    Boolean ret_d = updateContact(name, phone, "", contact_id.toString());
+                    Boolean ret_d = updateContact(name, phone, email, contact_id.toString());
                     if(ret_d){
 
                     }
@@ -166,13 +196,6 @@ public class editContact extends AppCompatActivity {
         }
 
         return phoneContactID;
-    }
-
-    // ListPhoneContactsActivity use this method to start this activity.
-    public static void start(Context context)
-    {
-        Intent intent = new Intent(context, editContact.class);
-        context.startActivity(intent);
     }
 
     /* Get raw contact id by contact given name and family name.
@@ -288,6 +311,17 @@ public class editContact extends AppCompatActivity {
                             .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
                             .build());
                 }
+
+                String email_id = emailid.getText().toString();
+                String company_name = company.getText().toString();
+                String department_name = department.getText().toString();
+                String jobs = job.getText().toString();
+                String my_address = address.getText().toString();
+                String web = website.getText().toString();
+
+                MyDbHelper myDbHelper = new MyDbHelper(editContact.this, null, 9);
+                myDbHelper.updateContact(contact_id, number, name, phoneContactType.toString(), email_id, company_name, department_name, jobs, my_address, web);
+
                 contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
             }
         }
@@ -301,7 +335,7 @@ public class editContact extends AppCompatActivity {
 
     private boolean isEmailValid(String email)
     {
-        String emailAddress = email.toString().trim();
+        String emailAddress = email.trim();
         if (emailAddress == null)
             return false;
         else if (emailAddress.equals(""))
@@ -314,10 +348,7 @@ public class editContact extends AppCompatActivity {
             Pattern pattern = Pattern.compile(expression,
                     Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(inputStr);
-            if (matcher.matches())
-                return true;
-            else
-                return false;
+            return matcher.matches();
         }
     }
 

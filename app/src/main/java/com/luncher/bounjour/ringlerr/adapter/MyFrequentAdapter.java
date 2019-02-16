@@ -142,7 +142,8 @@ public class MyFrequentAdapter extends RecyclerView.Adapter<MyFrequentAdapter.Vi
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         String name = values.get(position);
-        final String phone = "+91"+getLastnCharacters(phone_no.get(position), 10);
+        String number = phone_no.get(position);
+        final String phone = "+91"+getLastnCharacters(number, 10);
         final Integer call_count = count.get(position);
         float full_duration = 0;
 
@@ -375,6 +376,9 @@ public class MyFrequentAdapter extends RecyclerView.Adapter<MyFrequentAdapter.Vi
     }
 
     public String getLastnCharacters(String inputString, int subStringLength){
+        if(null == inputString){
+            return null;
+        }
         int length = inputString.length();
         if(length <= subStringLength){
             return inputString;

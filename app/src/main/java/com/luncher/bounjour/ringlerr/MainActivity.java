@@ -5,10 +5,8 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.pm.ResolveInfo;
 import android.os.Environment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +15,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,37 +23,39 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.crashlytics.android.Crashlytics;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.luncher.bounjour.ringlerr.activity.AboutActivity;
 import com.luncher.bounjour.ringlerr.activity.BlockList;
+import com.luncher.bounjour.ringlerr.activity.CouponsActivity;
 import com.luncher.bounjour.ringlerr.activity.DialpadActivity;
-import com.luncher.bounjour.ringlerr.activity.FollowUsDialog;
+import com.luncher.bounjour.ringlerr.activity.IntroScreen;
 import com.luncher.bounjour.ringlerr.activity.MySettings;
+import com.luncher.bounjour.ringlerr.activity.NotificationActivity;
 import com.luncher.bounjour.ringlerr.activity.RateusDialog;
 import com.luncher.bounjour.ringlerr.activity.ReminderSelfDialog;
 import com.luncher.bounjour.ringlerr.activity.ReminderList;
 import com.luncher.bounjour.ringlerr.activity.SchedulerDialog;
 import com.luncher.bounjour.ringlerr.activity.SchedulerList;
 import com.luncher.bounjour.ringlerr.activity.SearchContact;
+import com.luncher.bounjour.ringlerr.activity.SosActivity;
+import com.luncher.bounjour.ringlerr.activity.SosSettings;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -62,10 +63,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
+import static android.Manifest.permission.READ_CALL_LOG;
 import static android.Manifest.permission.READ_CONTACTS;
 
 public class MainActivity extends AppCompatActivity
@@ -75,20 +75,18 @@ public class MainActivity extends AppCompatActivity
 
     public final static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
     private static final int REQUEST_READ_CONTACTS = 444;
-    private ImageButton btnSelectGif;
-    private ImageButton btnSelectStickers;
+    private static final int REQUEST_READ_CALL_LOG = 452;
+    private ImageButton sos_button;
     private ImageButton schedularButton;
     private ImageButton btnSelecReminder;
+    private ImageButton btnsosSettingsButton;
     private ImageButton btnSelecKeyboard;
-    private RelativeLayout keyboardLayout;
     private int PICK_ICON_REQUEST = 2, PICK_THEME_REQUEST = 3, PICK_STICKER_REQUEST = 5;
 
     public static final int MULTIPLE_PERMISSIONS = 10; // code you want.
 
     private Boolean run_once = true;
     public EditText search;
-    private boolean isUp;
-    private int mVibrationLength;
     private TextView menu_name;
     private ImageView navImageView;
     private Boolean is_hide = true;
@@ -97,24 +95,23 @@ public class MainActivity extends AppCompatActivity
     public String TAG = "DROIDSPEECH_LOG";
 
    //Manifest.permission.RECORD_AUDIO,
+    //Manifest.permission.SEND_SMS,
     String[] permissions = new String[]{
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.PROCESS_OUTGOING_CALLS,
             Manifest.permission.CALL_PHONE,
-            Manifest.permission.READ_CALL_LOG,
+            READ_CALL_LOG,
             Manifest.permission.WRITE_CALL_LOG,
-            Manifest.permission.SEND_SMS,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.WRITE_CONTACTS,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.ANSWER_PHONE_CALLS,
     };
 
     MyDbHelper myDbHelper;
-    private String[] mgs_arr = {};
-    ArrayList<String> arrayList = new ArrayList<String>();
     ListView lv;
     String res;
-
-    String isProfileVerified;
-    Cursor cursor;
-    int counter;
     String[] permissionsList = {};
 
     //voice
@@ -124,6 +121,8 @@ public class MainActivity extends AppCompatActivity
     ImageView facebook;
     ImageView linkedin;
     ImageView youtube;
+    Button grant_permission;
+    RelativeLayout grant_permission_layout;
 
     private FirebaseAnalytics mFirebaseAnalytics;
     String pFt;
@@ -132,25 +131,30 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav);
-        search = (EditText) findViewById(R.id.search);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        search = findViewById(R.id.search);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         View header = navigationView.getHeaderView(0);
-        menu_name = (TextView) header.findViewById(R.id.menu_name);
-        navImageView = (ImageView) header.findViewById(R.id.navImageView);
+        menu_name = header.findViewById(R.id.menu_name);
+        navImageView = header.findViewById(R.id.navImageView);
 
-        instagram = (ImageView) findViewById(R.id.instagram);
-        twitter = (ImageView) findViewById(R.id.twitter);
-        facebook = (ImageView) findViewById(R.id.facebook);
-        linkedin = (ImageView) findViewById(R.id.linkedin);
-        youtube = (ImageView) findViewById(R.id.youtube);
+        instagram = findViewById(R.id.instagram);
+        twitter = findViewById(R.id.twitter);
+        facebook = findViewById(R.id.facebook);
+        linkedin = findViewById(R.id.linkedin);
+        youtube = findViewById(R.id.youtube);
+
+        grant_permission = findViewById(R.id.grant_permission);
+        grant_permission_layout = findViewById(R.id.grant_permission_layout);
 
         mAuth = FirebaseAuth.getInstance();
 
         //btnSelectGif = (ImageButton) findViewById(R.id.gifButton);
-        btnSelecReminder = (ImageButton) findViewById(R.id.reminderButton);
+        btnSelecReminder = findViewById(R.id.reminderButton);
+        btnsosSettingsButton = findViewById(R.id.sosSettingsButton);
         //btnSelectStickers = (ImageButton) findViewById(R.id.stickerButton);
-        schedularButton = (ImageButton) findViewById(R.id.schedularButton);
-        btnSelecKeyboard = (ImageButton) findViewById(R.id.keyboard);
+        schedularButton = findViewById(R.id.schedularButton);
+        sos_button = findViewById(R.id.sos_button);
+        btnSelecKeyboard = findViewById(R.id.keyboard);
 
         session = new SessionManager(getApplicationContext());
         // get user data from session
@@ -167,47 +171,6 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAnalytics.setUserProperty("phone", mPhone);
         mFirebaseAnalytics.setUserProperty("email", mEmail);
 
-//        myDbHelper = new MyDbHelper(MainActivity.this, null, null, 1);
-//        isProfileVerified = myDbHelper.getIsProfileVerified();
-//
-//        if(isProfileVerified.equals("0")) {
-//            //redrict to login
-//            Intent mainintent = new Intent(this, WelcomeActivity.class);
-//            startActivity(mainintent);
-//            finish();
-//        }else {
-//
-////            try {
-////                Intent intent = new Intent();
-////                String manufacturer = android.os.Build.MANUFACTURER;
-////                if ("xiaomi".equalsIgnoreCase(manufacturer)) {
-////                    intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-////                } else if ("oppo".equalsIgnoreCase(manufacturer)) {
-////                    intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
-////                } else if ("vivo".equalsIgnoreCase(manufacturer)) {
-////                    intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-////                }
-////
-////                List<ResolveInfo> list = this.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-////                if  (list.size() > 0) {
-////                    this.startActivity(intent);
-////                }
-////            } catch (Exception e) {
-////                //Crashlytics.logException(e);
-////            }
-//
-//            if(mayRequestContacts()){
-//                getContacts();
-//            }
-//
-//            // use this to start and trigger a service
-//            Intent i = new Intent(this, MessageService.class);
-//            this.startService(i);
-//
-//        }
-
-
-
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 
             if (!Settings.canDrawOverlays(this)) {
@@ -221,8 +184,10 @@ public class MainActivity extends AppCompatActivity
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SearchContact.class);
-                startActivity(intent);
+                if (mayRequestContacts()) {
+                    Intent intent = new Intent(MainActivity.this, SearchContact.class);
+                    startActivity(intent);
+                }
             }
 
         });
@@ -253,10 +218,18 @@ public class MainActivity extends AppCompatActivity
 
         youtube.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                goToUrl("https://www.youtube.com/channel/UC0rZCd13omkd2rxf1njno-w");
+                goToUrl("https://www.youtube.com/channel/UCnWQMls1gtiG2NFhCUcJMCQ");
             }
         });
 
+        grant_permission.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(checkPermissions()){
+                    restartActivity();
+                }
+            }
+        });
 
         //droidSpeech = new DroidSpeech(this, null);
         //droidSpeech.setOnDroidSpeechListener(this);
@@ -265,7 +238,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void goToUrl (String url) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         Uri uriUrl = Uri.parse(url);
         Intent WebView = new Intent(Intent.ACTION_VIEW, uriUrl);
@@ -294,24 +267,12 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         // put your code here...
         // Get a handle to the list view
-        lv = (ListView) findViewById(R.id.a_Main);
+        lv = findViewById(R.id.a_Main);
 
         // get user data from session
         HashMap<String, String> user = session.getUserDetails();
         String mName = user.get(SessionManager.KEY_NAME);
         menu_name.setText(mName);
-
-        String filePath = Environment.getExternalStorageDirectory() + "/ringerrr/profile/my_profile.jpeg";
-        File file = new File(filePath);
-        if (file.exists()){
-            RequestOptions requestOptions = RequestOptions.circleCropTransform()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true);
-            Glide.with(MainActivity.this)
-                    .load(filePath)
-                    .apply(requestOptions)
-                    .into(navImageView);
-        }
 
         // Start speech recognition
         //droidSpeech.startDroidSpeechRecognition();
@@ -366,14 +327,15 @@ public class MainActivity extends AppCompatActivity
             }
 
 
-            if (checkPermissions() && run_once) {
+            if (run_once) {
                 run_once = false;
                 //  permissions  granted.
+                checkPermissions();
 
-                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                Toolbar toolbar = findViewById(R.id.toolbar);
                 setSupportActionBar(toolbar);
 
-                if (mayRequestContacts()) {
+                if (mayRequestContacts() && mayRequestManageCall()) {
 
                     Intent cbIntent = new Intent();
                     cbIntent.setClass(this, ContactBoundService.class);
@@ -385,23 +347,45 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     //tabs
-                    TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-                    ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+                    TabLayout tabLayout = findViewById(R.id.tabs);
+                    ViewPager viewPager = findViewById(R.id.viewPager);
                     TabsPager tabsPager = new TabsPager(getSupportFragmentManager());
 
                     viewPager.setOffscreenPageLimit(2);
                     viewPager.setAdapter(tabsPager);
                     tabLayout.setupWithViewPager(viewPager);
+
+                    String filePath = Environment.getExternalStorageDirectory() + "/ringerrr/profile/my_profile.jpeg";
+                    File file = new File(filePath);
+                    if (file.exists()){
+                        RequestOptions requestOptions = RequestOptions.circleCropTransform()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true);
+                        Glide.with(MainActivity.this)
+                                .load(filePath)
+                                .apply(requestOptions)
+                                .into(navImageView);
+                    }
+
+                    // use this to start and trigger a service
+                    Intent i = new Intent(this, MessageService.class);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        this.startForegroundService(i);
+                    } else {
+                        this.startService(i);
+                    }
+                }else{
+                    grant_permission_layout.setVisibility(View.VISIBLE);
                 }
 
 
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
                 drawer.addDrawerListener(toggle);
                 toggle.syncState();
 
-                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                NavigationView navigationView = findViewById(R.id.nav_view);
                 navigationView.setNavigationItemSelectedListener(this);
 
 //                FloatingActionButton fab = findViewById(R.id.fab);
@@ -428,6 +412,14 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
 
+                btnsosSettingsButton.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        selectSosSteeings();
+                    }
+                });
+
 //                btnSelectStickers.setOnClickListener(new View.OnClickListener() {
 //
 //                    @Override
@@ -436,7 +428,7 @@ public class MainActivity extends AppCompatActivity
 //                    }
 //                });
 //
-                  schedularButton.setOnClickListener(new View.OnClickListener() {
+                schedularButton.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -451,14 +443,14 @@ public class MainActivity extends AppCompatActivity
                         showKeyboard();
                     }
                 });
-            }
 
-            // use this to start and trigger a service
-            Intent i = new Intent(this, MessageService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                this.startForegroundService(i);
-            } else {
-                this.startService(i);
+                sos_button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        sosActivity();
+                    }
+                });
             }
         }
     }
@@ -473,9 +465,15 @@ public class MainActivity extends AppCompatActivity
         startActivity(keyboard);
     }
 
+    private void sosActivity() {
+        Intent sosActivity = new Intent(MainActivity.this, SosActivity.class);
+        //sosActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(sosActivity);
+    }
+
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if(!is_hide){
@@ -515,12 +513,22 @@ public class MainActivity extends AppCompatActivity
             startActivity(block_lists);
         }
 
+        if (id == R.id.action_notification) {
+            Intent notiintent = new Intent(MainActivity.this, NotificationActivity.class);
+            startActivity(notiintent);
+        }
+
+        if (id == R.id.action_coupons) {
+            Intent coupon_intent = new Intent(MainActivity.this, CouponsActivity.class);
+            startActivity(coupon_intent);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -534,13 +542,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }, 100);
 
-        } else if (id == R.id.nav_notification) {
-
-            Toast toast;
-            toast = Toast.makeText(getApplicationContext(), "You don't have any new notification", Toast.LENGTH_LONG);
-            toast.show();
-
-        }  else if (id == R.id.nav_settings) {
+        } else if (id == R.id.nav_settings) {
 
             final Intent settingintent = new Intent(MainActivity.this, MySettings.class);
             new Handler().postDelayed(new Runnable() {
@@ -559,10 +561,14 @@ public class MainActivity extends AppCompatActivity
             showRateDialog();
         }else if (id == R.id.action_follow_us){
             showFollowUsDialog();
+        }else if(id == R.id.action_feedback){
+            shareFeedback();
+        }else if(id == R.id.action_app_guide){
+            openIntro();
         }
 
         if (id != R.id.action_follow_us) {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }
         return true;
@@ -573,14 +579,30 @@ public class MainActivity extends AppCompatActivity
         alert.showDialog(this);
     }
 
+    public void shareFeedback(){
+        String inURL = "https://wa.me/919560631652";
+        Intent browse = new Intent( Intent.ACTION_VIEW , Uri.parse( inURL ) );
+        startActivity( browse );
+    }
+
     public void showFollowUsDialog(){
-        LinearLayout v = (LinearLayout) findViewById(R.id.support_layout);
+        LinearLayout v = findViewById(R.id.support_layout);
         if(is_menu_hide) {
             v.setVisibility(View.VISIBLE);
         }else{
             v.setVisibility(View.GONE);
         }
         is_menu_hide = !is_menu_hide;
+    }
+
+    private void openIntro(){
+        final Intent intent1 = new Intent(MainActivity.this, IntroScreen.class);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(intent1);
+            }
+        }, 100);
     }
 
     private void share(){
@@ -614,6 +636,7 @@ public class MainActivity extends AppCompatActivity
             case MULTIPLE_PERMISSIONS: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permissions granted.
+                    restartActivity();
                 } else {
                     String u_permissions = "";
                     for (String per : permissionsList) {
@@ -623,7 +646,27 @@ public class MainActivity extends AppCompatActivity
                 }
                 return;
             }
+            case REQUEST_READ_CONTACTS:{
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(mayRequestManageCall()) {
+                        restartActivity();
+                    }
+                }
+            }
+            case REQUEST_READ_CALL_LOG:{
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(mayRequestContacts()) {
+                        restartActivity();
+                    }
+                }
+            }
         }
+    }
+
+    private void restartActivity() {
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     //contact read start
@@ -639,6 +682,21 @@ public class MainActivity extends AppCompatActivity
             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
         } else {
             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+        }
+        return false;
+    }
+
+    private boolean mayRequestManageCall() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (checkSelfPermission(READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        if (shouldShowRequestPermissionRationale(READ_CALL_LOG)) {
+            requestPermissions(new String[]{READ_CALL_LOG}, REQUEST_READ_CALL_LOG);
+        } else {
+            requestPermissions(new String[]{READ_CALL_LOG}, REQUEST_READ_CALL_LOG);
         }
         return false;
     }
@@ -677,6 +735,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         }, 100);
+    }
+
+    private void selectSosSteeings(){
+        Intent schedul = new Intent(MainActivity.this, SosSettings.class);
+        startActivity(schedul);
     }
 
     private void selectStickerLibrary() {

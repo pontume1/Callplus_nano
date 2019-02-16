@@ -32,6 +32,7 @@ import com.luncher.bounjour.ringlerr.SessionManager;
 import com.luncher.bounjour.ringlerr.TimeShow;
 import com.luncher.bounjour.ringlerr.model.Identity;
 import com.luncher.bounjour.ringlerr.model.MyFrequent;
+import com.luncher.bounjour.ringlerr.model.MyRecent;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -49,7 +50,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
-import static com.luncher.bounjour.ringlerr.activity.MyDexApplication.CHANNEL_ID;
 import static com.luncher.bounjour.ringlerr.activity.MyDexApplication.CHANNEL_ID_BOUND;
 
 public class RecentService extends IntentService {
@@ -123,7 +123,7 @@ public class RecentService extends IntentService {
 
     public ArrayList updateFrequentContact() {
 
-        myDbHelper = new MyDbHelper(getApplicationContext(), null, null, 1);
+        myDbHelper = new MyDbHelper(getApplicationContext(), null, 7);
         List<String> input = new ArrayList<>();
         List<String> phone_no = new ArrayList<>();
         List<String> types = new ArrayList<>();
@@ -131,6 +131,8 @@ public class RecentService extends IntentService {
         List<Bitmap> user_image = new ArrayList<>();
         List<Integer> contact_id = new ArrayList<>();
         List<Integer> c_id = new ArrayList<>();
+
+        List<MyRecent> callLog = myDbHelper.getAllCallLog();
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
 

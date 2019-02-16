@@ -26,9 +26,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.github.tamir7.contacts.Contact;
+import com.luncher.bounjour.ringlerr.MainActivity;
 import com.luncher.bounjour.ringlerr.R;
 import com.luncher.bounjour.ringlerr.SessionManager;
 import com.luncher.bounjour.ringlerr.TimeShow;
@@ -51,6 +54,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static android.Manifest.permission.READ_CONTACTS;
 
 
 /**
@@ -109,7 +114,8 @@ public class FrequentFragment extends Fragment {
         // get user data from session
         all_lists = session.getFrequentContacts();
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        recyclerView = view.findViewById(R.id.my_recycler_view);
+
         //Toast.makeText(getContext(), "recent fag", Toast.LENGTH_LONG).show();
         // use this setting to
         // improve performance if you know that changes
@@ -169,7 +175,7 @@ public class FrequentFragment extends Fragment {
                         cm_count = 1;
 
                         TimeShow time_ago = new TimeShow();
-                        ago.add(time_ago.DateDifference(time));
+                        ago.add(TimeShow.DateDifference(time));
 
                         int contactId = getContactIDFromNumber(number);
 
